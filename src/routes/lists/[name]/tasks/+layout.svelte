@@ -1,33 +1,16 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { env } from '$env/dynamic/public';
+	import TaskCheckbox from '$lib/components/TaskCheckbox.svelte';
+	import { tasksStore } from '$lib/tasks.store.js';
 	import { Plus } from 'lucide-svelte';
 
-	async function toggleTaskCompleted(id: string) {
-		let res: Response | undefined = undefined;
-		let data = undefined;
-		try {
-			res = await fetch(`${env.PUBLIC_API_BASE_URL}/tasks/${id}/toggle-completed`, {
-				method: 'PATCH'
-			});
-			if (res.headers.get('Content-Type') === 'application/json') {
-				data = await res.json();
-			}
-		} catch (err: unknown) {
-			console.error(err);
-		}
-		console.log(data);
-		if (!res) {
-			console.error('something went wrong!');
-			return;
-		}
-		if (!res.ok) {
-			console.error(data);
-			return;
-		}
-	}
-
 	let { data, children } = $props();
+
+	$effect(() => {
+		if (data.tasks) {
+			tasksStore.set(data.tasks);
+		}
+	});
 </script>
 
 <div class="min-w-[500px] max-w-[500px] border-r px-4">
@@ -46,19 +29,16 @@
 		</label>
 	</form>
 	<ul>
-		{#each data.tasks as t (t.id)}
-			<li class="w-full">
-				<input
-					class="checkbox checkbox-xs"
-					onchange={() => toggleTaskCompleted(t.id)}
-					type="checkbox"
-					checked={t.completed}
-				/>
-				<a href="/lists/{$page.params.name}/tasks/{t.id}">
-					<span>{t.title}</span>
-				</a>
-			</li>
-		{/each}
+		{#if $tasksStore}
+			{#each $tasksStore as t (t.id)}
+				<li class="w-full">
+					<TaskCheckbox {t} />
+					<a href="/lists/{$page.params.name}/tasks/{t.id}">
+						<span>{t.title.length > 0 ? t.title : 'No title'}</span>
+					</a>
+				</li>
+			{/each}
+		{/if}
 	</ul>
 </div>
 

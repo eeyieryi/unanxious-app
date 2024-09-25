@@ -1,6 +1,7 @@
 import { env } from '$env/dynamic/public';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
+import type { CreateTaskDTO } from '$lib/api';
 
 export const actions: Actions = {
 	createTask: async ({ request, fetch, url }) => {

@@ -1,6 +1,7 @@
 import { env } from '$env/dynamic/public';
 import { error } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
+import type { Task } from '$lib/api';
 
 export const load: LayoutServerLoad = async ({ fetch }) => {
 	let res: Response | undefined;

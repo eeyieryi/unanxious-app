@@ -1,11 +1,11 @@
-type Task = {
+export type Task = {
 	id: string;
 	title: string;
 	description: string;
 	completed: boolean;
 };
 
-type CreateTaskDTO = {
+export type CreateTaskDTO = {
 	title: string;
 	description: string | undefined;
 };
