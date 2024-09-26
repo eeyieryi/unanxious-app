@@ -1,8 +1,8 @@
 import { derived, writable } from 'svelte/store';
-import type { Task } from '$lib/api';
+import type { List, Task } from '$lib/api';
 
 function createTasksStore() {
-	const { set, subscribe, update } = writable<Task[]>();
+	const { set, subscribe, update } = writable<Task[]>([]);
 
 	return {
 		set,
@@ -11,6 +11,12 @@ function createTasksStore() {
 
 		init: (initialState: Task[]) => {
 			set(initialState);
+		},
+
+		reset: () => {
+			update(() => {
+				return [];
+			});
 		},
 
 		updateTask: (t: Task) => {
@@ -27,6 +33,13 @@ function createTasksStore() {
 			update((tasks) => {
 				return [t, ...tasks];
 			});
+		},
+		removeTask: (t: Task) => {
+			update((tasks) => {
+				return tasks.filter((task) => {
+					return task.id !== t.id;
+				});
+			});
 		}
 	};
 }
@@ -34,11 +47,18 @@ function createTasksStore() {
 export const tasksStore = createTasksStore();
 export const selectedTaskID = writable<string | null>(null);
 export const selectedTask = derived([tasksStore, selectedTaskID], ([tasks, selectedTaskID]) => {
-	return selectedTaskID
-		? tasks
-			? tasks.length > 0
-				? tasks.find((task) => task.id === selectedTaskID)
-				: null
-			: null
-		: null;
+	if (selectedTaskID) {
+		const found = tasks.find((task) => task.id === selectedTaskID);
+		if (found) return found;
+	}
+	return null;
+});
+
+export const listsStore = writable<List[]>([]);
+export const taskList = derived([listsStore, selectedTask], ([lists, selectedTask]) => {
+	if (selectedTask) {
+		const found = lists.find((l) => l.id === selectedTask.list_id);
+		if (found) return found;
+	}
+	return null;
 });

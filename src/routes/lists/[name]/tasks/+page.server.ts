@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { env } from '$env/dynamic/public';
-import { fail, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import type { CreateTaskDTO, Task } from '$lib/api';
 
 export const actions: Actions = {
-	createTask: async ({ request, fetch, url }) => {
+	createTask: async ({ request, fetch, params }) => {
 		const formData = await request.formData();
 		const title = formData.get('title');
 		if (!title) {
@@ -14,10 +13,16 @@ export const actions: Actions = {
 		let res: Response | undefined = undefined;
 		let data = undefined;
 		try {
+			let listId: string | undefined = undefined;
+			if (params.name !== 'all') {
+				listId = params.name;
+			}
+
 			res = await fetch(`${env.PUBLIC_API_BASE_URL}/tasks`, {
 				method: 'POST',
 				body: JSON.stringify({
-					title
+					title,
+					list_id: listId
 				} as CreateTaskDTO)
 			});
 			if (res.headers.has('Content-Type')) {

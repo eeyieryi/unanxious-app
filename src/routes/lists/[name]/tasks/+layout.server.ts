@@ -1,13 +1,13 @@
 import { env } from '$env/dynamic/public';
 import { error } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
-import type { Task } from '$lib/api';
+import type { ListWithTasks } from '$lib/api';
 
-export const load: LayoutServerLoad = async ({ fetch }) => {
+export const load: LayoutServerLoad = async ({ fetch, params }) => {
 	let res: Response | undefined;
 	let data = undefined;
 	try {
-		res = await fetch(`${env.PUBLIC_API_BASE_URL}/tasks`, {
+		res = await fetch(`${env.PUBLIC_API_BASE_URL}/lists/${params.name}/tasks`, {
 			method: 'GET'
 		});
 		if (res.headers.get('Content-Type') === 'application/json') {
@@ -26,6 +26,6 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 		return error(res.status, { message: String(data) });
 	}
 	return {
-		tasks: data as Task[]
+		listWithTasks: data as ListWithTasks
 	};
 };

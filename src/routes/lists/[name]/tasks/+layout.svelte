@@ -4,13 +4,14 @@
 	import { page } from '$app/stores';
 	import type { Task } from '$lib/api';
 	import TaskCheckbox from '$lib/components/TaskCheckbox.svelte';
-	import { tasksStore } from '$lib/tasks.store.js';
+	import { listsStore, tasksStore } from '$lib/tasks.store.js';
 	import { Plus } from 'lucide-svelte';
 
 	let { data, children } = $props();
 
 	$effect(() => {
-		tasksStore.init(data.tasks);
+		listsStore.set(data.lists);
+		tasksStore.init(data.listWithTasks.list_tasks);
 	});
 </script>
 
