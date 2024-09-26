@@ -14,7 +14,7 @@ export const actions: Actions = {
 		let data = undefined;
 		try {
 			let listId: string | undefined = undefined;
-			if (params.name !== 'all') {
+			if (params.name !== 'all' && params.name !== 'inbox') {
 				listId = params.name;
 			}
 
