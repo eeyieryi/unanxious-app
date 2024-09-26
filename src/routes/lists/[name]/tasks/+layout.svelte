@@ -1,5 +1,8 @@
 <script lang="ts">
+	import { applyAction, enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import type { Task } from '$lib/api';
 	import TaskCheckbox from '$lib/components/TaskCheckbox.svelte';
 	import { tasksStore } from '$lib/tasks.store.js';
 	import { Plus } from 'lucide-svelte';
@@ -7,14 +10,26 @@
 	let { data, children } = $props();
 
 	$effect(() => {
-		if (data.tasks) {
-			tasksStore.set(data.tasks);
-		}
+		tasksStore.init(data.tasks);
 	});
 </script>
 
 <div class="min-w-[500px] max-w-[500px] border-r px-4">
-	<form class="flex flex-col" method="POST" action="/?/createTask">
+	<form
+		class="flex flex-col"
+		method="POST"
+		action="/lists/{$page.params.name}/tasks?/createTask"
+		use:enhance={() => {
+			return async ({ result }) => {
+				if (result.type === 'success') {
+					tasksStore.addTask(result.data as Task);
+					await goto(`/lists/all/tasks/${result!.data!.id}`);
+				} else {
+					await applyAction(result);
+				}
+			};
+		}}
+	>
 		<label class="label">
 			<span class="label-text mr-2 uppercase">task</span>
 			<input

@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { env } from '$env/dynamic/public';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import type { CreateTaskDTO } from '$lib/api';
+import type { CreateTaskDTO, Task } from '$lib/api';
 
 export const actions: Actions = {
 	createTask: async ({ request, fetch, url }) => {
@@ -34,14 +35,6 @@ export const actions: Actions = {
 			return fail(res.status, { error: String(data) });
 		}
 
-		if (url.searchParams.has('redirectTo')) {
-			return redirect(303, url.searchParams.get('redirectTo')!);
-		}
-
-		if (data.id) {
-			return redirect(303, `/lists/all/tasks/${data.id}`);
-		}
-
-		return { success: true };
+		return data as Task;
 	}
 };
