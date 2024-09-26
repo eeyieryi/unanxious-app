@@ -34,5 +34,11 @@ function createTasksStore() {
 export const tasksStore = createTasksStore();
 export const selectedTaskID = writable<string | null>(null);
 export const selectedTask = derived([tasksStore, selectedTaskID], ([tasks, selectedTaskID]) => {
-	return selectedTaskID ? tasks.find((task) => task.id === selectedTaskID) : null;
+	return selectedTaskID
+		? tasks
+			? tasks.length > 0
+				? tasks.find((task) => task.id === selectedTaskID)
+				: null
+			: null
+		: null;
 });
