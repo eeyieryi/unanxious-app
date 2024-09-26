@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { env } from '$env/dynamic/public';
-	import type { Task } from '$lib/api';
+	import { formatDueAt, type Task } from '$lib/api';
 	import TaskCheckbox from '$lib/components/TaskCheckbox.svelte';
+	import TaskDateTimePicker from '$lib/components/TaskDateTimePicker.svelte';
 	import { tasksStore } from '$lib/tasks.store.js';
 
 	let task = $derived(
@@ -44,13 +45,19 @@
 		});
 		return (await res.json()) as Task;
 	}
+
+	let datepicker: HTMLDialogElement | null = $state(null);
+	let taskDueAt = $derived(task.due_at ? formatDueAt(task.due_at) : null);
 </script>
 
 <div class="flex flex-col p-4">
 	{#if task}
 		<div>
 			<TaskCheckbox t={task} />
-			<span class="text-neutral-content">Date</span>
+			<button onclick={() => datepicker!.showModal()} class="text-neutral-content"
+				>{taskDueAt ?? 'Date'}</button
+			>
+			<TaskDateTimePicker bind:datepicker t={task} />
 		</div>
 		<div class="flex flex-col">
 			<input

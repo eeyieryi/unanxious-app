@@ -29,7 +29,7 @@
 		</label>
 	</form>
 	<ul>
-		{#if $tasksStore}
+		{#if $tasksStore?.length > 0}
 			{#each $tasksStore as t (t.id)}
 				<li class="w-full">
 					<TaskCheckbox {t} />

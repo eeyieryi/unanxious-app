@@ -38,6 +38,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"lucide-svelte": "^0.445.0"
+		"lucide-svelte": "^0.445.0",
+		"moment": "^2.30.1"
 	}
 }
