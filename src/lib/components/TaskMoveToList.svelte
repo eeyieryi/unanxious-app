@@ -8,7 +8,7 @@
 		const res = await fetch(`${env.PUBLIC_API_BASE_URL}/tasks/${t.id}/move-to-list`, {
 			method: 'PATCH',
 			body: JSON.stringify({
-				list_id: moveToListID
+				list_id: moveToListID // "" to remove
 			})
 		});
 		return (await res.json()) as Task;
@@ -20,7 +20,7 @@
 		moveToListDialog: HTMLDialogElement | undefined;
 	};
 	let { t, availableLists, moveToListDialog = $bindable() }: TaskMoveToListProps = $props();
-	let moveToListID = $state<string | null>(t.list_id);
+	let moveToListID = $state<string>(t.list_id ?? '');
 </script>
 
 <dialog bind:this={moveToListDialog} id="move-to-list-dialog" class="modal">
@@ -30,7 +30,7 @@
 		</form>
 
 		<select bind:value={moveToListID}>
-			<option value="">Remove List</option>
+			<option value="">Inbox</option>
 			{#each availableLists as l (l.id)}
 				<option value={l.id}>
 					{l.title}
@@ -40,7 +40,7 @@
 
 		<button
 			class="btn"
-			disabled={moveToListID ? moveToListID.length === 0 : true}
+			disabled={moveToListID === t.list_id}
 			onclick={async () => {
 				if (t.list_id === moveToListID) {
 					return;

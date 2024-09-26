@@ -12,6 +12,10 @@
 		{
 			href: '/lists/all',
 			title: 'all'
+		},
+		{
+			href: '/lists/inbox',
+			title: 'inbox'
 		}
 	];
 
