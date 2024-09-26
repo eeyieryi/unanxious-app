@@ -17,13 +17,29 @@
 			task.title = v;
 		}
 	};
+	let taskDescription = {
+		get value() {
+			return task?.description;
+		},
+		set value(v) {
+			task.description = v;
+		}
+	};
 
 	async function updateTaskTitle(): Promise<Task> {
-		console.log(task?.title);
 		const res = await fetch(`${env.PUBLIC_API_BASE_URL}/tasks/${task?.id}/update-title`, {
 			method: 'PATCH',
 			body: JSON.stringify({
 				title: taskTitle.value
+			})
+		});
+		return (await res.json()) as Task;
+	}
+	async function updateTaskDescription(): Promise<Task> {
+		const res = await fetch(`${env.PUBLIC_API_BASE_URL}/tasks/${task?.id}/update-description`, {
+			method: 'PATCH',
+			body: JSON.stringify({
+				description: taskDescription.value
 			})
 		});
 		return (await res.json()) as Task;
@@ -64,7 +80,21 @@
 				placeholder="No title"
 				bind:value={taskTitle.value}
 			/>
-			<textarea class="textarea"></textarea>
+			<textarea
+				class="textarea"
+				onchange={async () => {
+					const tu = await updateTaskDescription();
+					tasksStore.update((tasks) => {
+						return tasks.map((ta) => {
+							if (ta.id === task.id) {
+								return tu as Task;
+							}
+							return ta;
+						});
+					});
+				}}
+				bind:value={taskDescription.value}
+			></textarea>
 		</div>
 	{/if}
 </div>
