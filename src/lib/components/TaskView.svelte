@@ -1,9 +1,12 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { env } from '$env/dynamic/public';
 	import { formatDueAt, type Task } from '$lib/api';
 	import TaskCheckbox from '$lib/components/TaskCheckbox.svelte';
 	import TaskDateTimePicker from '$lib/components/TaskDateTimePicker.svelte';
-	import { tasksStore } from '$lib/tasks.store.js';
+	import { listsStore, taskList, tasksStore } from '$lib/tasks.store.js';
+	import { ArrowLeft } from 'lucide-svelte';
+	import TaskMoveToList from './TaskMoveToList.svelte';
 
 	type TaskViewProps = {
 		task: Task;
@@ -47,8 +50,19 @@
 	}
 
 	let datepicker: HTMLDialogElement | null = $state(null);
+	let moveToListDialog: HTMLDialogElement | undefined = $state(undefined);
 	let taskDueAt = $derived(task.due_at ? formatDueAt(task.due_at) : null);
 </script>
+
+<div class="flex flex-row items-center">
+	<a href="/lists/{$page.params.name}/tasks" class="btn btn-ghost btn-xs">
+		<ArrowLeft />
+	</a>
+	<TaskMoveToList bind:moveToListDialog availableLists={$listsStore} t={task} />
+	<button class="btn btn-ghost btn-sm" onclick={() => moveToListDialog!.showModal()}>
+		{$taskList?.title ?? 'List'}
+	</button>
+</div>
 
 <div>
 	<TaskCheckbox t={task} />
