@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { env } from '$env/dynamic/public';
 
+	import { Save } from 'lucide-svelte';
 	import { type DateValue, fromAbsolute } from '@internationalized/date';
 
+	import { cn } from '$lib/utils';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Calendar } from '$lib/components/ui/calendar';
 	import { buttonVariants } from '$lib/components/ui/button';
@@ -57,8 +59,10 @@
 			bind:value={dateValue} />
 		<Dialog.Footer class="flex flex-col space-x-2">
 			<Dialog.Close
-				class={buttonVariants({ variant: 'default' })}
-				onclick={() => save()}>Save</Dialog.Close>
+				class={cn(buttonVariants({ variant: 'default' }), 'flex items-center space-x-2')}
+				onclick={() => save()}>
+				<Save class="h-5 w-5" /><span>Save</span>
+			</Dialog.Close>
 			<Dialog.Close
 				class={buttonVariants({ variant: 'destructive' })}
 				onclick={() => updateTaskDueAt(null)}>Clear</Dialog.Close>

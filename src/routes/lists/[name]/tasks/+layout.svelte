@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
+	import clsx from 'clsx';
 	import { Plus } from 'lucide-svelte';
 
 	import { Label } from '$lib/components/ui/label';
@@ -75,13 +76,20 @@
 		</div>
 	</form>
 	{#if filteredTasks.length > 0}
-		<ul>
+		<ul class="flex flex-col items-center justify-center">
 			{#each filteredTasks as t (t.id)}
 				<li class="flex w-full items-center space-x-2">
 					<TaskCheckbox t={t} />
-					<a href="/lists/{$page.params.name}/tasks/{t.id}">
-						<span>{t.title.length > 0 ? t.title : 'No title'}</span>
-					</a>
+					<Label
+						class={clsx('w-full', {
+							'text-gray-500 line-through': t.completed
+						})}>
+						<a
+							class="block w-full py-4"
+							href="/lists/{$page.params.name}/tasks/{t.id}">
+							<span>{t.title.length > 0 ? t.title : 'No title'}</span>
+						</a>
+					</Label>
 				</li>
 			{/each}
 		</ul>
