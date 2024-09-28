@@ -3,6 +3,12 @@
 	"singleQuote": true,
 	"trailingComma": "none",
 	"printWidth": 100,
+	"bracketSameLine": true,
+	"arrowParens": "always",
+	"bracketSpacing": true,
+	"htmlWhitespaceSensitivity": "strict",
+	"quoteProps": "as-needed",
+	"semi": true,
 	"plugins": ["prettier-plugin-svelte", "prettier-plugin-tailwindcss"],
 	"overrides": [
 		{
@@ -11,5 +17,8 @@
 				"parser": "svelte"
 			}
 		}
-	]
+	],
+	"singleAttributePerLine": true,
+	"svelteAllowShorthand": false,
+	"svelteBracketNewLine": false
 }

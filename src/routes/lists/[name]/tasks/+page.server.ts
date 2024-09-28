@@ -1,6 +1,8 @@
-import { env } from '$env/dynamic/public';
 import { fail } from '@sveltejs/kit';
+import { env } from '$env/dynamic/public';
+
 import type { Actions } from './$types';
+
 import type { CreateTaskDTO, Task } from '$lib/api';
 
 export const actions: Actions = {

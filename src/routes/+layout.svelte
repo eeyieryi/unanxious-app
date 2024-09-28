@@ -1,7 +1,12 @@
 <script lang="ts">
 	import '../app.css';
+
 	import { page } from '$app/stores';
+
 	import { Plus } from 'lucide-svelte';
+
+	import { Input } from '$lib/components/ui/input';
+	import { Button } from '$lib/components/ui/button';
 
 	type PremadeListItem = {
 		href: string;
@@ -27,8 +32,7 @@
 		<a href="/" aria-current={$page.url.pathname === '/'}><span>Home</span></a>
 		{#snippet item({ title, href }: PremadeListItem)}
 			<a class="capitalize" aria-current={$page.url.pathname.includes(href)} {href}
-				><span>{title}</span></a
-			>
+				><span>{title}</span></a>
 		{/snippet}
 
 		{#each premadeLists as premadeItem}
@@ -41,9 +45,9 @@
 
 		<div class="divider"></div>
 
-		<form class="flex flex-row" action="/lists" method="post">
-			<input class="input input-xs input-bordered" name="title" />
-			<button class="btn btn-outline btn-xs ml-2" type="submit"><Plus class="h-4 w-4" /></button>
+		<form class="mt-2 flex flex-row space-x-2" action="/lists" method="post">
+			<Input name="title" />
+			<Button variant="outline" size="icon" type="submit"><Plus /></Button>
 		</form>
 	</nav>
 
@@ -52,7 +56,17 @@
 
 <style lang="postcss">
 	nav > a {
-		@apply link-hover;
+		@apply no-underline [@media(hover:hover)]:hover:underline;
+		&:hover {
+			@apply cursor-pointer underline;
+		}
+	}
+	.divider {
+		@apply flex flex-row items-center self-stretch;
+		&:before,
+		&:after {
+			@apply h-0.5 w-full flex-grow content-[''];
+		}
 	}
 	[aria-current='true'] {
 		@apply text-center underline;

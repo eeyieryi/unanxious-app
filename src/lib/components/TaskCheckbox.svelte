@@ -1,49 +1,43 @@
 <script lang="ts">
 	import { env } from '$env/dynamic/public';
+
+	import { Checkbox } from '$lib/components/ui/checkbox';
+
 	import type { Task } from '$lib/api';
 	import { tasksStore } from '$lib/tasks.store';
 
-	async function toggleTaskCompleted() {
-		let res: Response | undefined = undefined;
-		let data = undefined;
-		try {
-			res = await fetch(`${env.PUBLIC_API_BASE_URL}/tasks/${t.id}/toggle-completed`, {
-				method: 'PATCH'
-			});
-			if (res.headers.get('Content-Type') === 'application/json') {
-				data = await res.json();
-			}
-		} catch (err: unknown) {
-			console.error(err);
-		}
-		if (!res) {
-			console.error('something went wrong!');
-			return;
-		}
-		if (!res.ok) {
-			console.error(data);
-			return;
-		}
-		tasksStore.update((tasks) => {
-			return tasks.map((ta) => {
-				if (ta.id === t.id) {
-					return data as Task;
+	function toggleTaskCompleted() {
+		fetch(`${env.PUBLIC_API_BASE_URL}/tasks/${t.id}/toggle-completed`, {
+			method: 'PATCH'
+		})
+			.then(async (res) => {
+				if (res.headers.get('Content-Type') === 'application/json') {
+					return { res, data: await res.json() };
 				}
-				return ta;
+				throw Error('Content-Type is not application/json');
+			})
+			.then(({ res, data }) => {
+				if (res.ok) {
+					tasksStore.update((tasks) => {
+						return tasks.map((ta) => {
+							if (ta.id === t.id) {
+								return data as Task;
+							}
+							return ta;
+						});
+					});
+				} else {
+					console.error(res.status, data);
+				}
 			});
-		});
 	}
 
-	type TaskCheckboxProps = {
+	type Props = {
 		t: Task;
 	};
-
-	let { t }: TaskCheckboxProps = $props();
+	let { t }: Props = $props();
 </script>
 
-<input
-	onchange={() => toggleTaskCompleted()}
-	class="checkbox checkbox-xs"
-	type="checkbox"
-	checked={t.completed}
-/>
+<Checkbox
+	onCheckedChange={() => toggleTaskCompleted()}
+	checked={t.completed} />

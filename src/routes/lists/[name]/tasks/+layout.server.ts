@@ -1,6 +1,8 @@
-import { env } from '$env/dynamic/public';
 import { error } from '@sveltejs/kit';
+import { env } from '$env/dynamic/public';
+
 import type { LayoutServerLoad } from './$types';
+
 import type { ListWithTasks } from '$lib/api';
 
 export const load: LayoutServerLoad = async ({ fetch, params }) => {

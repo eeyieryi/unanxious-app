@@ -18,7 +18,6 @@
 		"@sveltejs/vite-plugin-svelte": "^4.0.0-next.7",
 		"@types/eslint": "^9.6.1",
 		"autoprefixer": "^10.4.20",
-		"daisyui": "^4.12.10",
 		"eslint": "^9.11.1",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.44.0",
@@ -38,7 +37,12 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"lucide-svelte": "^0.445.0",
-		"moment": "^2.30.1"
+		"@internationalized/date": "^3.5.5",
+		"bits-ui": "^0.21.15",
+		"clsx": "^2.1.1",
+		"lucide-svelte": "^0.446.0",
+		"moment": "^2.30.1",
+		"tailwind-merge": "^2.5.2",
+		"tailwind-variants": "^0.2.1"
 	}
 }

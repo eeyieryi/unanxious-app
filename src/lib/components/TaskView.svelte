@@ -1,12 +1,19 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { env } from '$env/dynamic/public';
-	import { formatDueAt, type Task } from '$lib/api';
-	import TaskCheckbox from '$lib/components/TaskCheckbox.svelte';
-	import TaskDateTimePicker from '$lib/components/TaskDateTimePicker.svelte';
-	import { listsStore, taskList, tasksStore } from '$lib/tasks.store.js';
+
 	import { ArrowLeft } from 'lucide-svelte';
-	import TaskMoveToList from './TaskMoveToList.svelte';
+
+	import { Input } from '$lib/components/ui/input';
+	import { Button } from '$lib/components/ui/button';
+	import { Textarea } from '$lib/components/ui/textarea';
+
+	import TaskCheckbox from '$lib/components/TaskCheckbox.svelte';
+	import TaskMoveToList from '$lib/components/TaskMoveToList.svelte';
+	import TaskDateTimePicker from '$lib/components/TaskDateTimePicker.svelte';
+
+	import type { Task } from '$lib/api';
+	import { listsStore, tasksStore } from '$lib/tasks.store.js';
 
 	type TaskViewProps = {
 		task: Task;
@@ -48,31 +55,27 @@
 		});
 		return (await res.json()) as Task;
 	}
-
-	let datepicker: HTMLDialogElement | null = $state(null);
-	let moveToListDialog: HTMLDialogElement | undefined = $state(undefined);
-	let taskDueAt = $derived(task.due_at ? formatDueAt(task.due_at) : null);
 </script>
 
-<div class="flex flex-row items-center">
-	<a href="/lists/{$page.params.name}/tasks" class="btn btn-ghost btn-xs">
+<div class="flex items-center space-x-2">
+	<Button
+		variant="link"
+		size="icon"
+		href="/lists/{$page.params.name}/tasks">
 		<ArrowLeft />
-	</a>
-	<TaskMoveToList bind:moveToListDialog availableLists={$listsStore} t={task} />
-	<button class="btn btn-ghost btn-sm" onclick={() => moveToListDialog!.showModal()}>
-		{$taskList?.title ?? 'List'}
-	</button>
+	</Button>
+	<TaskMoveToList
+		availableLists={$listsStore}
+		t={task} />
 </div>
 
-<div>
+<div class="flex items-center space-x-2">
 	<TaskCheckbox t={task} />
-	<button onclick={() => datepicker!.showModal()} class="text-neutral-content"
-		>{taskDueAt ?? 'Date'}</button
-	>
-	<TaskDateTimePicker bind:datepicker t={task} />
+	<TaskDateTimePicker task={task} />
 </div>
-<div class="flex flex-col">
-	<input
+
+<div class="mt-4 flex flex-col space-y-4">
+	<Input
 		onchange={async () => {
 			const tu = await updateTaskTitle();
 			tasksStore.updateTask(tu);
@@ -80,17 +83,13 @@
 		onkeyup={() => {
 			tasksStore.updateTask({ ...task, title: taskTitle.value });
 		}}
-		class="input input-sm input-accent"
 		type="text"
 		placeholder="No title"
-		bind:value={taskTitle.value}
-	/>
-	<textarea
-		class="textarea"
+		bind:value={taskTitle.value} />
+	<Textarea
 		onchange={async () => {
 			const tu = await updateTaskDescription();
 			tasksStore.updateTask(tu);
 		}}
-		bind:value={taskDescription.value}
-	></textarea>
+		bind:value={taskDescription.value}></Textarea>
 </div>

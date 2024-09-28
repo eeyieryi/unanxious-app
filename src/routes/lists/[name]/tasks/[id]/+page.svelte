@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+
 	import TaskView from '$lib/components/TaskView.svelte';
+
 	import { selectedTask, selectedTaskID } from '$lib/tasks.store.js';
 
 	$effect(() => {

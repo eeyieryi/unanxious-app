@@ -1,5 +1,3 @@
-import moment from 'moment';
-
 export type Task = {
 	id: string;
 	title: string;
@@ -7,12 +5,6 @@ export type Task = {
 	completed: boolean;
 	due_at: number | null; // Unix epoch
 	list_id: string | null;
-};
-
-export type CreateTaskDTO = {
-	title: string;
-	description: string | undefined;
-	list_id: string | undefined;
 };
 
 export type List = {
@@ -25,6 +17,16 @@ export type ListWithTasks = {
 	list_tasks: Task[];
 };
 
-export function formatDueAt(seconds: number): string {
-	return moment().to(new Date(seconds * 1000));
-}
+export type CreateTaskDTO = {
+	title: string;
+	description: string | undefined;
+	list_id: string | undefined;
+};
+
+export type UpdateTaskDueAtDTO = {
+	due_at: number | undefined;
+};
+
+export type APIError = {
+	error: string;
+};

@@ -1,59 +1,57 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { env } from '$env/dynamic/public';
+
+	import { cn } from '$lib/utils';
+	import * as Dialog from '$lib/components/ui/dialog';
+	import { buttonVariants } from '$lib/components/ui/button';
+
 	import type { List, Task } from '$lib/api';
 	import { tasksStore } from '$lib/tasks.store';
 
-	async function moveToList() {
-		const res = await fetch(`${env.PUBLIC_API_BASE_URL}/tasks/${t.id}/move-to-list`, {
+	async function moveToList(listID: string | null) {
+		if (t.list_id === listID) {
+			return;
+		}
+		fetch(`${env.PUBLIC_API_BASE_URL}/tasks/${t.id}/move-to-list`, {
 			method: 'PATCH',
 			body: JSON.stringify({
-				list_id: moveToListID // "" to remove
+				list_id: listID
 			})
-		});
-		return (await res.json()) as Task;
+		})
+			.then((res) => res.json())
+			.then((tu) => {
+				tasksStore.updateTask(tu);
+			});
 	}
 
-	type TaskMoveToListProps = {
+	type Props = {
 		t: Task;
 		availableLists: List[];
-		moveToListDialog: HTMLDialogElement | undefined;
 	};
-	let { t, availableLists, moveToListDialog = $bindable() }: TaskMoveToListProps = $props();
-	let moveToListID = $state<string>(t.list_id ?? '');
+	let { t, availableLists }: Props = $props();
 </script>
 
-<dialog bind:this={moveToListDialog} id="move-to-list-dialog" class="modal">
-	<div class="modal-box">
-		<form id="move-to-list" method="dialog">
-			<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
-		</form>
-
-		<select bind:value={moveToListID}>
-			<option value="">Inbox</option>
-			{#each availableLists as l (l.id)}
-				<option value={l.id}>
-					{l.title}
-				</option>
+<Dialog.Root>
+	<Dialog.Trigger
+		>{t.list_id
+			? (availableLists.find((l) => l.id === t.list_id)?.title ?? 'No List')
+			: 'No List'}</Dialog.Trigger>
+	<Dialog.Content class="w-full max-w-48">
+		<Dialog.Title>Select List</Dialog.Title>
+		<ul>
+			<li>
+				<Dialog.Close
+					onclick={() => moveToList(null)}
+					class={cn(buttonVariants({ variant: 'ghost' }), 'w-full')}>Inbox</Dialog.Close>
+			</li>
+			{#each availableLists as availableList (availableList.id)}
+				<li>
+					<Dialog.Close
+						onclick={() => moveToList(availableList.id)}
+						class={cn(buttonVariants({ variant: 'ghost' }), 'w-full')}
+						>{availableList.title}</Dialog.Close>
+				</li>
 			{/each}
-		</select>
-
-		<button
-			class="btn"
-			disabled={moveToListID === t.list_id}
-			onclick={async () => {
-				if (t.list_id === moveToListID) {
-					return;
-				}
-				const tu = await moveToList();
-				const oldListId = t.list_id || 'all';
-				tasksStore.removeTask(tu);
-				goto(`/lists/${oldListId}/tasks`);
-			}}>OK</button
-		>
-	</div>
-
-	<form method="dialog" class="modal-backdrop">
-		<button>close</button>
-	</form>
-</dialog>
+		</ul>
+	</Dialog.Content>
+</Dialog.Root>
