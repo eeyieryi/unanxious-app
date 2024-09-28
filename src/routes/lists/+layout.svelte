@@ -26,7 +26,7 @@
 	let { data, children } = $props();
 </script>
 
-<nav class="flex min-w-[200px] flex-col space-y-2 border-r px-2 py-2">
+<nav class="flex w-full min-w-[200px] max-w-[200px] flex-col space-y-2 border-r px-2 py-2">
 	<header class="flex items-center space-x-2">
 		<ListTodo />
 		<h1 class="text-lg font-bold leading-none">Tasks</h1>
