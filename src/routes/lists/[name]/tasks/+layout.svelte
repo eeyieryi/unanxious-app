@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { applyAction, enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
+	import { applyAction, enhance } from '$app/forms';
 
 	import clsx from 'clsx';
 	import { Plus } from 'lucide-svelte';
@@ -17,7 +18,7 @@
 
 	let { data, children } = $props();
 
-	$effect(() => {
+	onMount(() => {
 		listsStore.set(data.lists);
 		tasksStore.init(data.listWithTasks.list_tasks);
 	});
