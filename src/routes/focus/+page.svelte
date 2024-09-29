@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+
 	import { Pause, Play, X } from 'lucide-svelte';
 
 	import { Input } from '$lib/components/ui/input';
@@ -71,7 +73,9 @@
 		return;
 	}
 
-	getLastTimerInterval();
+	onMount(() => {
+		getLastTimerInterval();
+	});
 </script>
 
 <div class="flex h-screen w-full min-w-[460px] max-w-[460px] flex-col space-y-8 border-r px-2 py-2">

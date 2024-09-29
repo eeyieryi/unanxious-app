@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+
 	import { dhms, getUnixEpochFromNow, padWithZero } from '$lib/datetime';
 
 	type Props = {
@@ -12,14 +14,13 @@
 	let totalSeconds = $derived(startTime ? (endTime ? endTime - startTime : now - startTime) : 0);
 	let time = $derived(dhms(totalSeconds));
 
-	$effect(() => {
+	onMount(() => {
 		const intervalID = setInterval(() => {
 			if (!isPaused) {
 				now = getUnixEpochFromNow();
 			}
 		}, 1000);
 		return () => {
-			console.log(`Clearing: ${intervalID}`);
 			clearInterval(intervalID);
 		};
 	});
