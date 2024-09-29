@@ -20,7 +20,7 @@
 		isAPIResponseError,
 		logAPIResponseErrorToConsole
 	} from '$lib/api';
-	import { tasksStore } from '$lib/tasks.store';
+	import { createTasksStore, type TasksStore } from '$lib/tasks.store';
 
 	let { data } = $props();
 
@@ -106,8 +106,10 @@
 		tasksStore.init(apiResponse.data.list_tasks);
 	}
 
+	let tasksStore: TasksStore;
 	onMount(() => {
 		getLastTimerInterval();
+		tasksStore = createTasksStore();
 		fetchTasks();
 	});
 </script>

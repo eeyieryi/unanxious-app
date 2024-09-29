@@ -2,7 +2,8 @@ import { derived, writable } from 'svelte/store';
 
 import type { List, Task } from '$lib/api';
 
-function createTasksStore() {
+export type TasksStore = ReturnType<typeof createTasksStore>;
+export function createTasksStore() {
 	const { set, subscribe, update } = writable<Task[]>([]);
 
 	return {
@@ -45,7 +46,7 @@ function createTasksStore() {
 	};
 }
 
-export const tasksStore = createTasksStore();
+export const tasksStore: TasksStore = createTasksStore();
 export const selectedTaskID = writable<string | null>(null);
 export const selectedTask = derived([tasksStore, selectedTaskID], ([tasks, selectedTaskID]) => {
 	if (selectedTaskID) {
