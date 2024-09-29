@@ -19,6 +19,5 @@
 		}
 	],
 	"singleAttributePerLine": true,
-	"svelteAllowShorthand": false,
-	"svelteBracketNewLine": false
+	"svelteAllowShorthand": false
 }
