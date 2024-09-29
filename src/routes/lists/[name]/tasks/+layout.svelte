@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { applyAction, enhance } from '$app/forms';
@@ -18,7 +17,7 @@
 
 	let { data, children } = $props();
 
-	onMount(() => {
+	$effect(() => {
 		listsStore.set(data.lists);
 		tasksStore.init(data.listWithTasks.list_tasks);
 	});
