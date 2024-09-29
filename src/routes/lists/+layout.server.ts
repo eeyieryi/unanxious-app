@@ -1,13 +1,14 @@
-import { env } from '$env/dynamic/public';
-
+import { error } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 
-import type { List } from '$lib/api';
+import { fetchAPI, isAPIResponseError, type List } from '$lib/api';
 
 export const load: LayoutServerLoad = async ({ fetch }) => {
-	const res = await fetch(`${env.PUBLIC_API_BASE_URL}/lists`);
-	const data = (await res.json()) as List[];
+	const apiResponse = await fetchAPI<List[]>(fetch, '/lists');
+	if (isAPIResponseError(apiResponse)) {
+		return error(apiResponse.res.status, { message: apiResponse.error.message });
+	}
 	return {
-		lists: data
+		lists: apiResponse.data
 	};
 };

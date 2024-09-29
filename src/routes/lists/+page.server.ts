@@ -1,7 +1,7 @@
-import { fail, redirect } from '@sveltejs/kit';
-import { env } from '$env/dynamic/public';
-
 import type { Actions } from './$types';
+import { fail, redirect } from '@sveltejs/kit';
+
+import { fetchAPI, isAPIResponseError, type List } from '$lib/api';
 
 export const actions: Actions = {
 	default: async ({ fetch, request }) => {
@@ -9,15 +9,15 @@ export const actions: Actions = {
 		const title = formData.get('title');
 		if (!title) return fail(400, { title, missing: true });
 
-		const res = await fetch(`${env.PUBLIC_API_BASE_URL}/lists`, {
+		const apiResponse = await fetchAPI<List>(fetch, '/lists', {
 			method: 'POST',
 			body: JSON.stringify({
-				title
+				title: title.toString()
 			})
 		});
-		if (res.ok) {
-			return redirect(303, `/lists/${(await res.json()).id}`);
+		if (isAPIResponseError(apiResponse)) {
+			return fail(apiResponse.res.status, { message: apiResponse.error.message });
 		}
-		return fail(500, { message: res.statusText });
+		return redirect(303, `/lists/${apiResponse.data.id}`);
 	}
 };

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { env } from '$env/dynamic/public';
-
 	import { Save } from 'lucide-svelte';
 	import { type DateValue, fromAbsolute } from '@internationalized/date';
 
@@ -9,31 +7,33 @@
 	import { Calendar } from '$lib/components/ui/calendar';
 	import { buttonVariants } from '$lib/components/ui/button';
 
+	import {
+		type Task,
+		type UpdateTaskDueAtDTO,
+		fetchAPI,
+		isAPIResponseError,
+		logAPIResponseErrorToConsole
+	} from '$lib/api';
 	import { formatDueAt } from '$lib/datetime';
 	import { tasksStore } from '$lib/tasks.store';
-	import type { Task, UpdateTaskDueAtDTO } from '$lib/api';
 
-	function updateTaskDueAt(dueAt: DateValue | null) {
-		let due_at: number | undefined = undefined;
+	async function updateTaskDueAt(dueAt: DateValue | null) {
+		let updateTaskDueAtDTO: UpdateTaskDueAtDTO = {
+			due_at: undefined
+		};
 		if (dueAt) {
-			due_at = dueAt.toDate('UTC').valueOf();
+			updateTaskDueAtDTO.due_at = dueAt.toDate('UTC').valueOf();
 		}
-		fetch(`${env.PUBLIC_API_BASE_URL}/tasks/${task.id}/update-due-at`, {
+		const apiResponse = await fetchAPI<Task>(fetch, `/tasks/${task.id}/update-due-at`, {
 			method: 'PATCH',
-			body: JSON.stringify({ due_at } as UpdateTaskDueAtDTO)
-		})
-			.then((res) => res.json())
-			.then((tu) => {
-				tasksStore.update((tasks) => {
-					return tasks.map((ta) => {
-						if (ta.id === tu.id) {
-							return tu;
-						}
-						return ta;
-					});
-				});
-			})
-			.catch(console.error);
+			body: JSON.stringify(updateTaskDueAtDTO)
+		});
+		if (isAPIResponseError(apiResponse)) {
+			logAPIResponseErrorToConsole(apiResponse);
+			// handle error
+			return;
+		}
+		tasksStore.updateTask(apiResponse.data);
 	}
 
 	function save() {

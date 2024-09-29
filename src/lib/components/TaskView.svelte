@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { env } from '$env/dynamic/public';
 
 	import { ArrowLeft } from 'lucide-svelte';
 
@@ -12,8 +11,8 @@
 	import TaskMoveToList from '$lib/components/TaskMoveToList.svelte';
 	import TaskDateTimePicker from '$lib/components/TaskDateTimePicker.svelte';
 
-	import type { Task } from '$lib/api';
 	import { listsStore, tasksStore } from '$lib/tasks.store.js';
+	import { fetchAPI, isAPIResponseError, logAPIResponseErrorToConsole, type Task } from '$lib/api';
 
 	type TaskViewProps = {
 		task: Task;
@@ -37,23 +36,36 @@
 		}
 	};
 
-	async function updateTaskTitle(): Promise<Task> {
-		const res = await fetch(`${env.PUBLIC_API_BASE_URL}/tasks/${task?.id}/update-title`, {
+	async function updateTaskTitle(): Promise<Task | void> {
+		if (!task) return;
+		const apiResponse = await fetchAPI<Task>(fetch, `/tasks/${task.id}/update-title`, {
 			method: 'PATCH',
 			body: JSON.stringify({
 				title: taskTitle.value
 			})
 		});
-		return (await res.json()) as Task;
+		if (isAPIResponseError(apiResponse)) {
+			logAPIResponseErrorToConsole(apiResponse);
+			// handle error
+			return;
+		}
+		return apiResponse.data;
 	}
-	async function updateTaskDescription(): Promise<Task> {
-		const res = await fetch(`${env.PUBLIC_API_BASE_URL}/tasks/${task?.id}/update-description`, {
+
+	async function updateTaskDescription(): Promise<Task | void> {
+		if (!task) return;
+		const apiResponse = await fetchAPI<Task>(fetch, `/tasks/${task.id}/update-description`, {
 			method: 'PATCH',
 			body: JSON.stringify({
 				description: taskDescription.value
 			})
 		});
-		return (await res.json()) as Task;
+		if (isAPIResponseError(apiResponse)) {
+			logAPIResponseErrorToConsole(apiResponse);
+			// handle error
+			return;
+		}
+		return apiResponse.data;
 	}
 </script>
 
@@ -78,7 +90,9 @@
 	<Input
 		onchange={async () => {
 			const tu = await updateTaskTitle();
-			tasksStore.updateTask(tu);
+			if (tu) {
+				tasksStore.updateTask(tu);
+			}
 		}}
 		onkeyup={() => {
 			tasksStore.updateTask({ ...task, title: taskTitle.value });
@@ -89,7 +103,9 @@
 	<Textarea
 		onchange={async () => {
 			const tu = await updateTaskDescription();
-			tasksStore.updateTask(tu);
+			if (tu) {
+				tasksStore.updateTask(tu);
+			}
 		}}
 		bind:value={taskDescription.value}></Textarea>
 </div>
