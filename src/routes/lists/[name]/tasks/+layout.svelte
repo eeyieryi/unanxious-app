@@ -14,7 +14,7 @@
 	import TaskCheckbox from '$lib/components/TaskCheckbox.svelte';
 
 	import type { Task } from '$lib/api';
-	import { listsStore, tasksStore } from '$lib/tasks.store.js';
+	import { listsStore, tasksStore } from '$lib/tasks.store';
 
 	let { data, children } = $props();
 

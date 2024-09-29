@@ -11,7 +11,7 @@
 	import TaskMoveToList from '$lib/components/TaskMoveToList.svelte';
 	import TaskDateTimePicker from '$lib/components/TaskDateTimePicker.svelte';
 
-	import { listsStore, tasksStore } from '$lib/tasks.store.js';
+	import { listsStore, tasksStore } from '$lib/tasks.store';
 	import { fetchAPI, isAPIResponseError, logAPIResponseErrorToConsole, type Task } from '$lib/api';
 
 	type TaskViewProps = {

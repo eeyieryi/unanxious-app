@@ -3,7 +3,7 @@
 
 	import { Pause, Play, X } from 'lucide-svelte';
 
-	import { cn } from '$lib/utils.js';
+	import { cn } from '$lib/utils';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Dialog from '$lib/components/ui/dialog';

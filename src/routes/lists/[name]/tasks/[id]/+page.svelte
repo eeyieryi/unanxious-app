@@ -4,7 +4,7 @@
 
 	import TaskView from '$lib/components/TaskView.svelte';
 
-	import { selectedTask, selectedTaskID } from '$lib/tasks.store.js';
+	import { selectedTask, selectedTaskID } from '$lib/tasks.store';
 
 	onMount(() => {
 		selectedTaskID.set($page.params.id);
