@@ -20,12 +20,12 @@
 			</a>
 		{/if}
 
-		{#if $page.url.pathname.startsWith('/timer')}
+		{#if $page.url.pathname.startsWith('/focus')}
 			<Timer class="h-6 w-6 text-muted-foreground" />
 		{:else}
 			<a
-				href="/timer"
-				aria-current={$page.url.pathname.startsWith('/timer')}>
+				href="/focus"
+				aria-current={$page.url.pathname.startsWith('/focus')}>
 				<Timer class="h-6 w-6" />
 			</a>
 		{/if}
