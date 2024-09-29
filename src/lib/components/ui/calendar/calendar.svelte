@@ -1,30 +1,29 @@
 <script lang="ts">
-	import { Calendar as CalendarPrimitive } from "bits-ui";
-	import * as Calendar from "./index.js";
-	import { cn } from "$lib/utils.js";
+	import { Calendar as CalendarPrimitive } from 'bits-ui';
+	import * as Calendar from './index.js';
+	import { cn } from '$lib/utils.js';
 
 	type $$Props = CalendarPrimitive.Props;
 
 	type $$Events = CalendarPrimitive.Events;
 
-	export let value: $$Props["value"] = undefined;
-	export let placeholder: $$Props["placeholder"] = undefined;
-	export let weekdayFormat: $$Props["weekdayFormat"] = "short";
+	export let value: $$Props['value'] = undefined;
+	export let placeholder: $$Props['placeholder'] = undefined;
+	export let weekdayFormat: $$Props['weekdayFormat'] = 'short';
 
-	let className: $$Props["class"] = undefined;
+	let className: $$Props['class'] = undefined;
 	export { className as class };
 </script>
 
 <CalendarPrimitive.Root
-	bind:value
-	bind:placeholder
-	{weekdayFormat}
-	class={cn("p-3", className)}
+	bind:value={value}
+	bind:placeholder={placeholder}
+	weekdayFormat={weekdayFormat}
+	class={cn('p-3', className)}
 	{...$$restProps}
 	on:keydown
 	let:months
-	let:weekdays
->
+	let:weekdays>
 	<Calendar.Header>
 		<Calendar.PrevButton />
 		<Calendar.Heading />
@@ -46,8 +45,10 @@
 					{#each month.weeks as weekDates}
 						<Calendar.GridRow class="mt-2 w-full">
 							{#each weekDates as date}
-								<Calendar.Cell {date}>
-									<Calendar.Day {date} month={month.value} />
+								<Calendar.Cell date={date}>
+									<Calendar.Day
+										date={date}
+										month={month.value} />
 								</Calendar.Cell>
 							{/each}
 						</Calendar.GridRow>
