@@ -3,19 +3,24 @@
 
 	import { Pause, Play, X } from 'lucide-svelte';
 
+	import { cn } from '$lib/utils.js';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { Button } from '$lib/components/ui/button';
+	import * as Dialog from '$lib/components/ui/dialog';
+	import { Button, buttonVariants } from '$lib/components/ui/button';
 
 	import TimerDigits from '$lib/components/TimerDigits.svelte';
 
 	import {
-		type TimerInterval,
+		type Task,
 		type Timer,
+		type ListWithTasks,
+		type TimerInterval,
 		fetchAPI,
 		isAPIResponseError,
 		logAPIResponseErrorToConsole
 	} from '$lib/api';
+	import { tasksStore } from '$lib/tasks.store';
 
 	let { data } = $props();
 
@@ -73,20 +78,73 @@
 		return;
 	}
 
+	async function attachTaskToTimer(task: Task) {
+		if (!selectedTimer) return;
+
+		const apiResponse = await fetchAPI<Timer>(fetch, '/timers/link-task', {
+			method: 'PATCH',
+			body: JSON.stringify({
+				task_id: task.id,
+				timer_id: selectedTimer.id
+			})
+		});
+		if (isAPIResponseError(apiResponse)) {
+			logAPIResponseErrorToConsole(apiResponse);
+			// handle error
+			return;
+		}
+		selectTimer(apiResponse.data);
+	}
+
+	async function fetchTasks() {
+		const apiResponse = await fetchAPI<ListWithTasks>(fetch, '/lists/all/tasks');
+		if (isAPIResponseError(apiResponse)) {
+			logAPIResponseErrorToConsole(apiResponse);
+			// handle error
+			return;
+		}
+		tasksStore.init(apiResponse.data.list_tasks);
+	}
+
 	onMount(() => {
 		getLastTimerInterval();
+		fetchTasks();
 	});
 </script>
 
 <div class="flex h-screen w-full min-w-[460px] max-w-[460px] flex-col space-y-8 border-r px-2 py-2">
 	<div class="flex items-center justify-between">
-		<Button variant="outline">
-			{#if selectedTimer}
-				Timer: {selectedTimer.title}
-			{:else}
+		{#if selectedTimer}
+			<Dialog.Root>
+				<Dialog.Trigger
+					class={cn(
+						buttonVariants({
+							variant: 'outline'
+						})
+					)}>
+					Timer: {selectedTimer.title}
+				</Dialog.Trigger>
+				<Dialog.Content>
+					<Dialog.Title>Attach to task</Dialog.Title>
+					<div>
+						<ul>
+							{#each $tasksStore as task (task.id)}
+								<li>
+									<Dialog.Close onclick={() => attachTaskToTimer(task)}>{task.title}</Dialog.Close>
+								</li>
+							{/each}
+						</ul>
+					</div>
+					<Dialog.Footer>
+						<Dialog.Close>Cancel</Dialog.Close>
+					</Dialog.Footer>
+				</Dialog.Content>
+			</Dialog.Root>
+		{:else}
+			<Button variant="outline">
 				<span class="font-lg font-mono uppercase">focus</span>
-			{/if}
-		</Button>
+			</Button>
+		{/if}
 		{#if selectedTimer}
 			<Button
 				variant="outline"
