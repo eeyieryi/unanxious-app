@@ -3,9 +3,9 @@
 
 	import TaskView from '$lib/components/TaskView.svelte';
 
-	import { getTasksState } from '$lib/tasks-state.svelte';
+	import { getAppState } from '$lib/app-state.svelte';
 
-	const tasksState = getTasksState();
+	const tasksState = getAppState();
 
 	$effect(() => {
 		tasksState.selectedTaskID = $page.params.id;

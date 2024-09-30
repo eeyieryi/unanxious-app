@@ -15,9 +15,9 @@
 		logAPIResponseErrorToConsole
 	} from '$lib/api';
 	import { formatDueAt } from '$lib/datetime';
-	import { getTasksState } from '$lib/tasks-state.svelte';
+	import { getAppState } from '$lib/app-state.svelte';
 
-	const tasksState = getTasksState();
+	const tasksState = getAppState();
 
 	async function updateTaskDueAt(dueAt: DateValue | null) {
 		let updateTaskDueAtDTO: UpdateTaskDueAtDTO = {

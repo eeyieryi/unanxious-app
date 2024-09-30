@@ -13,12 +13,12 @@
 	import TaskCheckbox from '$lib/components/TaskCheckbox.svelte';
 
 	import type { Task } from '$lib/api';
-	import { getTasksState, setTasksState } from '$lib/tasks-state.svelte';
+	import { getAppState, setAppState } from '$lib/app-state.svelte';
 
 	let { data, children } = $props();
 
-	setTasksState();
-	const tasksState = getTasksState();
+	setAppState();
+	const tasksState = getAppState();
 
 	$effect(() => {
 		tasksState.lists = data.lists;

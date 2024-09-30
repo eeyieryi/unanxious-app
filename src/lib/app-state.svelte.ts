@@ -2,7 +2,7 @@ import { getContext, setContext } from 'svelte';
 
 import type { List, Task } from '$lib/api';
 
-export class TasksState {
+export class AppState {
 	tasks = $state<Task[]>([]);
 	lists = $state<List[]>([]);
 
@@ -52,10 +52,10 @@ export class TasksState {
 	}
 }
 
-const TASKS_KEY = Symbol('TASKS_STATE');
-export function setTasksState() {
-	return setContext(TASKS_KEY, new TasksState());
+const API_STATE_KEY = Symbol('API_STATE');
+export function setAppState() {
+	return setContext(API_STATE_KEY, new AppState());
 }
-export function getTasksState() {
-	return getContext<ReturnType<typeof setTasksState>>(TASKS_KEY);
+export function getAppState() {
+	return getContext<ReturnType<typeof setAppState>>(API_STATE_KEY);
 }

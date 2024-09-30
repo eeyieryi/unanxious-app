@@ -11,7 +11,7 @@
 	import TaskMoveToList from '$lib/components/TaskMoveToList.svelte';
 	import TaskDateTimePicker from '$lib/components/TaskDateTimePicker.svelte';
 
-	import { getTasksState } from '$lib/tasks-state.svelte';
+	import { getAppState } from '$lib/app-state.svelte';
 	import { fetchAPI, isAPIResponseError, logAPIResponseErrorToConsole, type Task } from '$lib/api';
 
 	type TaskViewProps = {
@@ -19,7 +19,7 @@
 	};
 	let { task }: TaskViewProps = $props();
 
-	const tasksState = getTasksState();
+	const tasksState = getAppState();
 
 	let taskTitle = {
 		get value() {

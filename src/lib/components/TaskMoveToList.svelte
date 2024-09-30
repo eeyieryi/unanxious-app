@@ -10,9 +10,9 @@
 		isAPIResponseError,
 		logAPIResponseErrorToConsole
 	} from '$lib/api';
-	import { getTasksState } from '$lib/tasks-state.svelte';
+	import { getAppState } from '$lib/app-state.svelte';
 
-	const tasksState = getTasksState();
+	const tasksState = getAppState();
 
 	type Props = {
 		t: Task;

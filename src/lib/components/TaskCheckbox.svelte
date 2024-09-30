@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { Checkbox } from '$lib/components/ui/checkbox';
 
-	import { getTasksState } from '$lib/tasks-state.svelte';
+	import { getAppState } from '$lib/app-state.svelte';
 	import { fetchAPI, isAPIResponseError, logAPIResponseErrorToConsole, type Task } from '$lib/api';
 
-	const tasksState = getTasksState();
+	const tasksState = getAppState();
 
 	async function toggleTaskCompleted() {
 		const apiResponse = await fetchAPI<Task>(fetch, `/tasks/${t.id}/toggle-completed`, {

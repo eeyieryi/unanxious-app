@@ -20,12 +20,12 @@
 		isAPIResponseError,
 		logAPIResponseErrorToConsole
 	} from '$lib/api';
-	import { getTasksState, setTasksState } from '$lib/tasks-state.svelte';
+	import { getAppState, setAppState } from '$lib/app-state.svelte';
 
 	let { data } = $props();
 
-	setTasksState();
-	const tasksState = getTasksState();
+	setAppState();
+	const tasksState = getAppState();
 
 	let selectedTimer = $state<Timer | null>(null);
 	let lastTimerInterval = $state<TimerInterval | null>(null);
