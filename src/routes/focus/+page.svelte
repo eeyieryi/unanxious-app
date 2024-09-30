@@ -31,6 +31,14 @@
 	let lastTimerInterval = $state<TimerInterval | null>(null);
 	let isPaused = $derived(!(lastTimerInterval !== null && lastTimerInterval.end_time === null));
 
+	let selectedTimerTask = $derived.by(() => {
+		if (selectedTimer && selectedTimer.task_id) {
+			const found = appState.tasks.find((t) => t.id === selectedTimer?.task_id);
+			if (found) return found;
+		}
+		return null;
+	});
+
 	function selectTimer(t: Timer | null) {
 		selectedTimer = t;
 		getLastTimerInterval();
@@ -125,7 +133,11 @@
 							variant: 'outline'
 						})
 					)}>
-					Timer: {selectedTimer.title}
+					{#if selectedTimerTask}
+						Task: {selectedTimerTask.title}
+					{:else}
+						Timer: {selectedTimer.title}
+					{/if}
 				</Dialog.Trigger>
 				<Dialog.Content>
 					<Dialog.Title>Attach to task</Dialog.Title>
