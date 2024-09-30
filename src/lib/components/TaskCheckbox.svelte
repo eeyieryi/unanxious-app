@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { Checkbox } from '$lib/components/ui/checkbox';
 
-	import { tasksStore } from '$lib/tasks.store';
+	import { getTasksState } from '$lib/tasks-state.svelte';
 	import { fetchAPI, isAPIResponseError, logAPIResponseErrorToConsole, type Task } from '$lib/api';
+
+	const tasksState = getTasksState();
 
 	async function toggleTaskCompleted() {
 		const apiResponse = await fetchAPI<Task>(fetch, `/tasks/${t.id}/toggle-completed`, {
@@ -13,7 +15,7 @@
 			// handle error
 			return;
 		}
-		tasksStore.updateTask(apiResponse.data);
+		tasksState.update(apiResponse.data);
 	}
 
 	type Props = {

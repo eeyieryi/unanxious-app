@@ -11,13 +11,15 @@
 	import TaskMoveToList from '$lib/components/TaskMoveToList.svelte';
 	import TaskDateTimePicker from '$lib/components/TaskDateTimePicker.svelte';
 
-	import { listsStore, tasksStore } from '$lib/tasks.store';
+	import { getTasksState } from '$lib/tasks-state.svelte';
 	import { fetchAPI, isAPIResponseError, logAPIResponseErrorToConsole, type Task } from '$lib/api';
 
 	type TaskViewProps = {
 		task: Task;
 	};
 	let { task }: TaskViewProps = $props();
+
+	const tasksState = getTasksState();
 
 	let taskTitle = {
 		get value() {
@@ -77,7 +79,7 @@
 		<ArrowLeft />
 	</Button>
 	<TaskMoveToList
-		availableLists={$listsStore}
+		availableLists={tasksState.lists}
 		t={task} />
 </div>
 
@@ -91,11 +93,11 @@
 		onchange={async () => {
 			const tu = await updateTaskTitle();
 			if (tu) {
-				tasksStore.updateTask(tu);
+				tasksState.update(tu);
 			}
 		}}
 		onkeyup={() => {
-			tasksStore.updateTask({ ...task, title: taskTitle.value });
+			tasksState.update({ ...task, title: taskTitle.value });
 		}}
 		type="text"
 		placeholder="No title"
@@ -104,7 +106,7 @@
 		onchange={async () => {
 			const tu = await updateTaskDescription();
 			if (tu) {
-				tasksStore.updateTask(tu);
+				tasksState.update(tu);
 			}
 		}}
 		bind:value={taskDescription.value}></Textarea>

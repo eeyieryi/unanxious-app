@@ -10,7 +10,15 @@
 		isAPIResponseError,
 		logAPIResponseErrorToConsole
 	} from '$lib/api';
-	import { tasksStore } from '$lib/tasks.store';
+	import { getTasksState } from '$lib/tasks-state.svelte';
+
+	const tasksState = getTasksState();
+
+	type Props = {
+		t: Task;
+		availableLists: List[];
+	};
+	let { t, availableLists }: Props = $props();
 
 	async function moveToList(listID: string | null) {
 		if (t.list_id === listID) {
@@ -27,14 +35,8 @@
 			// handle error
 			return;
 		}
-		tasksStore.updateTask(apiResponse.data);
+		tasksState.update(apiResponse.data);
 	}
-
-	type Props = {
-		t: Task;
-		availableLists: List[];
-	};
-	let { t, availableLists }: Props = $props();
 </script>
 
 <Dialog.Root>

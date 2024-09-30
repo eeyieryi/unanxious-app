@@ -20,9 +20,12 @@
 		isAPIResponseError,
 		logAPIResponseErrorToConsole
 	} from '$lib/api';
-	import { createTasksStore, type TasksStore } from '$lib/tasks.store';
+	import { getTasksState, setTasksState } from '$lib/tasks-state.svelte';
 
 	let { data } = $props();
+
+	setTasksState();
+	const tasksState = getTasksState();
 
 	let selectedTimer = $state<Timer | null>(null);
 	let lastTimerInterval = $state<TimerInterval | null>(null);
@@ -103,13 +106,11 @@
 			// handle error
 			return;
 		}
-		tasksStore.init(apiResponse.data.list_tasks);
+		tasksState.init(apiResponse.data.list_tasks);
 	}
 
-	let tasksStore: TasksStore;
 	onMount(() => {
 		getLastTimerInterval();
-		tasksStore = createTasksStore();
 		fetchTasks();
 	});
 </script>
@@ -130,7 +131,7 @@
 					<Dialog.Title>Attach to task</Dialog.Title>
 					<div>
 						<ul>
-							{#each $tasksStore as task (task.id)}
+							{#each tasksState.tasks as task (task.id)}
 								<li>
 									<Dialog.Close onclick={() => attachTaskToTimer(task)}>{task.title}</Dialog.Close>
 								</li>

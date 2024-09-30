@@ -13,17 +13,20 @@
 	import TaskCheckbox from '$lib/components/TaskCheckbox.svelte';
 
 	import type { Task } from '$lib/api';
-	import { listsStore, tasksStore } from '$lib/tasks.store';
+	import { getTasksState, setTasksState } from '$lib/tasks-state.svelte';
 
 	let { data, children } = $props();
 
+	setTasksState();
+	const tasksState = getTasksState();
+
 	$effect(() => {
-		listsStore.set(data.lists);
-		tasksStore.init(data.listWithTasks.list_tasks);
+		tasksState.lists = data.lists;
+		tasksState.tasks = data.listWithTasks.list_tasks;
 	});
 
 	let filteredTasks = $derived(
-		$tasksStore.filter((task) => {
+		tasksState.tasks.filter((task) => {
 			const listName = $page.params.name;
 			if (listName === 'all') {
 				return true;
@@ -45,7 +48,7 @@
 			return async ({ result }) => {
 				if (result.type === 'success') {
 					const tu = result.data as Task;
-					tasksStore.addTask(tu);
+					tasksState.add(tu);
 					let listID = 'inbox';
 					if (tu.list_id) {
 						if (tu.list_id) {

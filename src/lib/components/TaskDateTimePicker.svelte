@@ -15,7 +15,9 @@
 		logAPIResponseErrorToConsole
 	} from '$lib/api';
 	import { formatDueAt } from '$lib/datetime';
-	import { tasksStore } from '$lib/tasks.store';
+	import { getTasksState } from '$lib/tasks-state.svelte';
+
+	const tasksState = getTasksState();
 
 	async function updateTaskDueAt(dueAt: DateValue | null) {
 		let updateTaskDueAtDTO: UpdateTaskDueAtDTO = {
@@ -33,7 +35,7 @@
 			// handle error
 			return;
 		}
-		tasksStore.updateTask(apiResponse.data);
+		tasksState.update(apiResponse.data);
 	}
 
 	function save() {
