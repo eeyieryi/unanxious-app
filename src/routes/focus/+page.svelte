@@ -37,7 +37,7 @@
 	}
 
 	async function getLastTimerInterval() {
-		const apiResponse = await fetchAPI<TimerInterval>(
+		const apiResponse = await fetchAPI<TimerInterval | null>(
 			fetch,
 			`/timers/intervals/last?timerID=${selectedTimer?.id ?? 'empty'}`
 		);
