@@ -5,15 +5,15 @@
 
 	import { getAppState } from '$lib/app-state.svelte';
 
-	const tasksState = getAppState();
+	const appState = getAppState();
 
 	$effect(() => {
-		tasksState.selectedTaskID = $page.params.id;
+		appState.selectedTaskID = $page.params.id;
 	});
 </script>
 
 <div class="flex flex-col p-4">
-	{#if tasksState.selectedTask}
-		<TaskView task={tasksState.selectedTask} />
+	{#if appState.selectedTask}
+		<TaskView task={appState.selectedTask} />
 	{/if}
 </div>

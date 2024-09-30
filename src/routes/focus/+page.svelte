@@ -25,7 +25,7 @@
 	let { data } = $props();
 
 	setAppState();
-	const tasksState = getAppState();
+	const appState = getAppState();
 
 	let selectedTimer = $state<Timer | null>(null);
 	let lastTimerInterval = $state<TimerInterval | null>(null);
@@ -106,7 +106,7 @@
 			// handle error
 			return;
 		}
-		tasksState.init(apiResponse.data.list_tasks);
+		appState.tasks = apiResponse.data.list_tasks;
 	}
 
 	onMount(() => {
@@ -131,7 +131,7 @@
 					<Dialog.Title>Attach to task</Dialog.Title>
 					<div>
 						<ul>
-							{#each tasksState.tasks as task (task.id)}
+							{#each appState.tasks as task (task.id)}
 								<li>
 									<Dialog.Close onclick={() => attachTaskToTimer(task)}>{task.title}</Dialog.Close>
 								</li>

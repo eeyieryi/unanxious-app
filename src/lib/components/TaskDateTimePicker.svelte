@@ -17,7 +17,7 @@
 	import { formatDueAt } from '$lib/datetime';
 	import { getAppState } from '$lib/app-state.svelte';
 
-	const tasksState = getAppState();
+	const appState = getAppState();
 
 	async function updateTaskDueAt(dueAt: DateValue | null) {
 		let updateTaskDueAtDTO: UpdateTaskDueAtDTO = {
@@ -35,7 +35,7 @@
 			// handle error
 			return;
 		}
-		tasksState.update(apiResponse.data);
+		appState.updateTask(apiResponse.data);
 	}
 
 	function save() {

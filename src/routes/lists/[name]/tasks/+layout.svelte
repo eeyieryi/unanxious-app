@@ -18,15 +18,15 @@
 	let { data, children } = $props();
 
 	setAppState();
-	const tasksState = getAppState();
+	const appState = getAppState();
 
 	$effect(() => {
-		tasksState.lists = data.lists;
-		tasksState.tasks = data.listWithTasks.list_tasks;
+		appState.lists = data.lists;
+		appState.tasks = data.listWithTasks.list_tasks;
 	});
 
 	let filteredTasks = $derived(
-		tasksState.tasks.filter((task) => {
+		appState.tasks.filter((task) => {
 			const listName = $page.params.name;
 			if (listName === 'all') {
 				return true;
@@ -48,7 +48,7 @@
 			return async ({ result }) => {
 				if (result.type === 'success') {
 					const tu = result.data as Task;
-					tasksState.add(tu);
+					appState.addTask(tu);
 					let listID = 'inbox';
 					if (tu.list_id) {
 						if (tu.list_id) {

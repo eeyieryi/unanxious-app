@@ -26,15 +26,7 @@ export class AppState {
 
 	constructor() {}
 
-	init(initialState: Task[]) {
-		this.tasks = initialState;
-	}
-
-	reset() {
-		this.tasks = [];
-	}
-
-	update(t: Task) {
+	updateTask(t: Task) {
 		this.tasks = this.tasks.map((task) => {
 			if (t.id === task.id) {
 				return t;
@@ -43,12 +35,8 @@ export class AppState {
 		});
 	}
 
-	add(t: Task) {
+	addTask(t: Task) {
 		this.tasks = [t, ...this.tasks];
-	}
-
-	remove(t: Task) {
-		this.tasks = this.tasks.filter((task) => t.id !== task.id);
 	}
 }
 

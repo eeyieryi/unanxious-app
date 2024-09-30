@@ -12,7 +12,7 @@
 	} from '$lib/api';
 	import { getAppState } from '$lib/app-state.svelte';
 
-	const tasksState = getAppState();
+	const appState = getAppState();
 
 	type Props = {
 		t: Task;
@@ -35,7 +35,7 @@
 			// handle error
 			return;
 		}
-		tasksState.update(apiResponse.data);
+		appState.updateTask(apiResponse.data);
 	}
 </script>
 

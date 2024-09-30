@@ -19,7 +19,7 @@
 	};
 	let { task }: TaskViewProps = $props();
 
-	const tasksState = getAppState();
+	const appState = getAppState();
 
 	let taskTitle = {
 		get value() {
@@ -79,7 +79,7 @@
 		<ArrowLeft />
 	</Button>
 	<TaskMoveToList
-		availableLists={tasksState.lists}
+		availableLists={appState.lists}
 		t={task} />
 </div>
 
@@ -93,11 +93,11 @@
 		onchange={async () => {
 			const tu = await updateTaskTitle();
 			if (tu) {
-				tasksState.update(tu);
+				appState.updateTask(tu);
 			}
 		}}
 		onkeyup={() => {
-			tasksState.update({ ...task, title: taskTitle.value });
+			appState.updateTask({ ...task, title: taskTitle.value });
 		}}
 		type="text"
 		placeholder="No title"
@@ -106,7 +106,7 @@
 		onchange={async () => {
 			const tu = await updateTaskDescription();
 			if (tu) {
-				tasksState.update(tu);
+				appState.updateTask(tu);
 			}
 		}}
 		bind:value={taskDescription.value}></Textarea>

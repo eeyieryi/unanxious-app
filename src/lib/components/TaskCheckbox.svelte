@@ -4,7 +4,7 @@
 	import { getAppState } from '$lib/app-state.svelte';
 	import { fetchAPI, isAPIResponseError, logAPIResponseErrorToConsole, type Task } from '$lib/api';
 
-	const tasksState = getAppState();
+	const appState = getAppState();
 
 	async function toggleTaskCompleted() {
 		const apiResponse = await fetchAPI<Task>(fetch, `/tasks/${t.id}/toggle-completed`, {
@@ -15,7 +15,7 @@
 			// handle error
 			return;
 		}
-		tasksState.update(apiResponse.data);
+		appState.updateTask(apiResponse.data);
 	}
 
 	type Props = {
