@@ -9,20 +9,14 @@ export class ThemeToggler {
 			const found = localStorage.getItem(this.storageKey);
 			if (!found) return;
 
-			if (found === 'dark') {
-				if (document.documentElement.classList.contains('dark')) {
-					return;
-				} else {
-					this.toggleTheme();
-				}
-			}
-
-			if (found === 'light') {
-				if (document.documentElement.classList.contains('dark')) {
-					this.toggleTheme();
-				} else {
-					return;
-				}
+			if (document.documentElement.classList.contains('dark')) {
+				// Dark Mode
+				if (found === 'dark') return;
+				if (found === 'light') this.toggleTheme();
+			} else {
+				// Light Mode
+				if (found === 'light') return;
+				if (found === 'dark') this.toggleTheme();
 			}
 		});
 	}
