@@ -8,7 +8,9 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
 
-	import { toggleTheme } from '$lib/toggle-theme';
+	import { ThemeToggler } from '$lib/toggle-theme/theme-toggler.svelte';
+
+	const themeToggler = new ThemeToggler();
 
 	let { children } = $props();
 </script>
@@ -16,7 +18,7 @@
 <div class="flex w-full flex-row">
 	<nav class="flex w-full min-w-[40px] max-w-[40px] flex-col items-center border-r">
 		<Button
-			onclick={() => toggleTheme()}
+			onclick={() => themeToggler.toggleTheme()}
 			class="hover:rounded-none hover:outline-none"
 			variant="ghost"
 			size="icon">
