@@ -30,6 +30,7 @@
 	let selectedTimer = $state<Timer | null>(null);
 	let lastTimerInterval = $state<TimerInterval | null>(null);
 	let isPaused = $derived(!(lastTimerInterval !== null && lastTimerInterval.end_time === null));
+	let timers = $state<Timer[]>(data.timers);
 
 	let selectedTimerTask = $derived.by(() => {
 		if (selectedTimer && selectedTimer.task_id) {
@@ -104,6 +105,7 @@
 			// handle error
 			return;
 		}
+		timers = timers.map((timer) => (timer.id === apiResponse.data.id ? apiResponse.data : timer));
 		selectTimer(apiResponse.data);
 	}
 
@@ -116,6 +118,10 @@
 		}
 		appState.tasks = apiResponse.data.list_tasks;
 	}
+	const timerTaskIDs = $derived(timers.map((timer) => timer.task_id).filter((id) => id !== null));
+	const availableToAttachTasks = $derived(
+		appState.tasks.filter((t) => !timerTaskIDs.includes(t.id))
+	);
 
 	onMount(() => {
 		getLastTimerInterval();
@@ -126,35 +132,38 @@
 <div class="flex h-screen w-full min-w-[460px] max-w-[460px] flex-col space-y-8 border-r px-2 py-2">
 	<div class="flex items-center justify-between">
 		{#if selectedTimer}
-			<Dialog.Root>
-				<Dialog.Trigger
-					class={cn(
-						buttonVariants({
-							variant: 'outline'
-						})
-					)}>
-					{#if selectedTimerTask}
-						Task: {selectedTimerTask.title}
-					{:else}
+			{#if selectedTimerTask}
+				<Button variant="outline">
+					Task: {selectedTimerTask.title}
+				</Button>
+			{:else}
+				<Dialog.Root>
+					<Dialog.Trigger
+						class={cn(
+							buttonVariants({
+								variant: 'outline'
+							})
+						)}>
 						Timer: {selectedTimer.title}
-					{/if}
-				</Dialog.Trigger>
-				<Dialog.Content>
-					<Dialog.Title>Attach to task</Dialog.Title>
-					<div>
-						<ul>
-							{#each appState.tasks as task (task.id)}
-								<li>
-									<Dialog.Close onclick={() => attachTaskToTimer(task)}>{task.title}</Dialog.Close>
-								</li>
-							{/each}
-						</ul>
-					</div>
-					<Dialog.Footer>
-						<Dialog.Close>Cancel</Dialog.Close>
-					</Dialog.Footer>
-				</Dialog.Content>
-			</Dialog.Root>
+					</Dialog.Trigger>
+					<Dialog.Content>
+						<Dialog.Title>Attach to task</Dialog.Title>
+						<div>
+							<ul>
+								{#each availableToAttachTasks as task (task.id)}
+									<li>
+										<Dialog.Close onclick={() => attachTaskToTimer(task)}
+											>{task.title}</Dialog.Close>
+									</li>
+								{/each}
+							</ul>
+						</div>
+						<Dialog.Footer>
+							<Dialog.Close>Cancel</Dialog.Close>
+						</Dialog.Footer>
+					</Dialog.Content>
+				</Dialog.Root>
+			{/if}
 		{:else}
 			<Button variant="outline">
 				<span class="font-lg font-mono uppercase">focus</span>
@@ -195,9 +204,9 @@
 			id="timer-title-input"
 			name="timer-title" />
 	</form>
-	{#if data.timers && data.timers.length > 0}
+	{#if timers && timers.length > 0}
 		<ul class="flex w-full flex-col items-center justify-center space-y-2">
-			{#each data.timers as timer (timer.id)}
+			{#each timers as timer (timer.id)}
 				<li class="w-full">
 					<Button
 						onclick={() => selectTimer(timer)}
