@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-
 	import { ArrowLeft } from 'lucide-svelte';
 
 	import { Input } from '$lib/components/ui/input';
@@ -75,7 +73,9 @@
 	<Button
 		variant="link"
 		size="icon"
-		href="/lists/{$page.params.name}/tasks">
+		onclick={() => {
+			appState.selectedTaskID = null;
+		}}>
 		<ArrowLeft />
 	</Button>
 	<TaskMoveToList

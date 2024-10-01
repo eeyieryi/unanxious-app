@@ -20,17 +20,15 @@
 		isAPIResponseError,
 		logAPIResponseErrorToConsole
 	} from '$lib/api';
-	import { getAppState, setAppState } from '$lib/app-state.svelte';
+	import { getAppState } from '$lib/app-state.svelte';
+	import { createTimer, fetchTimers } from '$lib/api-legacy';
 
-	let { data } = $props();
-
-	setAppState();
 	const appState = getAppState();
 
 	let selectedTimer = $state<Timer | null>(null);
 	let lastTimerInterval = $state<TimerInterval | null>(null);
 	let isPaused = $derived(!(lastTimerInterval !== null && lastTimerInterval.end_time === null));
-	let timers = $state<Timer[]>(data.timers);
+	let timers = $state<Timer[]>([]);
 
 	let selectedTimerTask = $derived.by(() => {
 		if (selectedTimer && selectedTimer.task_id) {
@@ -123,10 +121,18 @@
 		appState.tasks.filter((t) => !timerTaskIDs.includes(t.id))
 	);
 
+	async function fetchThings() {
+		timers = await fetchTimers(fetch);
+	}
+
 	onMount(() => {
+		fetchThings();
 		getLastTimerInterval();
 		fetchTasks();
 	});
+
+	let createTimerForm = $state<HTMLFormElement>();
+	let createTimerTitle = $state('');
 </script>
 
 <div class="flex h-screen w-full min-w-[460px] max-w-[460px] flex-col space-y-8 border-r px-2 py-2">
@@ -196,13 +202,23 @@
 		</Button>
 	</div>
 	<form
-		method="POST"
-		action="?/createTimer"
+		bind:this={createTimerForm}
+		onsubmit={async (e) => {
+			e.preventDefault();
+
+			const t = await createTimer(fetch, createTimerTitle);
+			if (t) {
+				timers.push(t);
+			}
+			createTimerForm?.reset();
+		}}
 		class="flex items-center space-x-2">
 		<Label for="timer-title-input">Timer</Label>
 		<Input
+			bind:value={createTimerTitle}
 			id="timer-title-input"
-			name="timer-title" />
+			name="timer-title"
+			placeholder="mindfulness" />
 	</form>
 	{#if timers && timers.length > 0}
 		<ul class="flex w-full flex-col items-center justify-center space-y-2">
