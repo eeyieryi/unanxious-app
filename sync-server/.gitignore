@@ -1,0 +1,12 @@
+*
+
+!src/
+!src/index.ts
+
+!.env.example
+!.gitignore
+!justfile
+!package.json
+!tsconfig.json
+!bun.lockb
+!README.md
