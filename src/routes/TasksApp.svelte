@@ -9,26 +9,32 @@
 
 	import { getAppDataService } from '$lib/data-service.svelte';
 
-	const appDataService = getAppDataService();
+	const dataService = getAppDataService();
 
-	type PremadeListItem = {
+	type ListItem = {
 		id: string;
-		title: string;
+		name: string;
 	};
-	const premadeLists: PremadeListItem[] = [
+
+	const fixedLists: ListItem[] = [
 		{
 			id: 'all',
-			title: 'all'
+			name: 'all'
 		},
 		{
 			id: 'inbox',
-			title: 'inbox'
+			name: 'inbox'
 		}
 	];
 
-	let createTaskForm = $state<HTMLFormElement>();
-	let createTaskFormTitleInput = $state('');
-	let selectedList = $state('inbox');
+	let createListForm = $state<HTMLFormElement>();
+	let createListFormInputName = $state('');
+	function handleSubmitCreateList(event: SubmitEvent) {
+		event.preventDefault();
+		const list = dataService.createList(createListFormInputName);
+		createListForm?.reset();
+		dataService.state.selectedListID = list.id;
+	}
 </script>
 
 <svelte:head>
@@ -43,41 +49,34 @@
 
 	<Separator />
 
-	{#snippet item({ id, title }: PremadeListItem)}
+	{#snippet item({ id, name: title }: ListItem)}
 		<Button
 			variant="outline"
 			onclick={() => {
-				selectedList = id;
+				dataService.state.selectedListID = id;
 			}}
 			class="capitalize">
 			<span>{title}</span>
 		</Button>
 	{/snippet}
 
-	{#each premadeLists as premadeItem}
-		{@render item(premadeItem)}
+	{#each fixedLists as fixedList}
+		{@render item(fixedList)}
 	{/each}
 
-	{#each appDataService.state.lists as l}
-		{@render item({ title: l.name, id: l.id })}
+	{#each dataService.state.lists as { name, id } (id)}
+		{@render item({ name, id })}
 	{/each}
 
 	<Separator />
 
 	<form
-		bind:this={createTaskForm}
+		bind:this={createListForm}
 		class="mt-2 flex flex-row space-x-2"
-		onsubmit={async (e) => {
-			e.preventDefault();
-			const list = appDataService.createList(createTaskFormTitleInput);
-			if (list) {
-				selectedList = list.id;
-				createTaskForm?.reset();
-			}
-		}}>
+		onsubmit={handleSubmitCreateList}>
 		<Input
 			name="title"
-			bind:value={createTaskFormTitleInput}
+			bind:value={createListFormInputName}
 			placeholder="studies" />
 		<Button
 			variant="outline"
@@ -86,4 +85,8 @@
 	</form>
 </nav>
 
-<TaskList listID={selectedList} />
+{#if dataService.state.selectedListID}
+	<TaskList />
+{:else}
+	<p>Select a list to see its tasks</p>
+{/if}

@@ -29,6 +29,53 @@ class AppState {
 		}
 		return null;
 	});
+	selectedListID = $state<string>('inbox');
+	selectedList = $derived.by(() => {
+		const listID = this.selectedListID;
+		if (listID) {
+			const found = this.lists.find((list) => listID === list.id);
+			if (found) return found;
+		}
+		return null;
+	});
+	selectedListTasks = $derived(
+		this.tasks.filter((task) => {
+			if (this.selectedListID === 'all') {
+				return true;
+			}
+			return task.list_id === this.selectedListID;
+		})
+	);
+
+	selectedTimerID = $state<string | null>(null);
+	selectedTimer = $derived.by(() => {
+		const selectedTimerID = this.selectedTimerID;
+		if (selectedTimerID) {
+			const found = this.timers.find((timer) => selectedTimerID === timer.id);
+			if (found) return found;
+		}
+		return null;
+	});
+	selectedTimerIntervals = $derived.by(() => {
+		const timerID = this.selectedTimerID ?? 'focus';
+		return this.timerIntervals.filter((ti) => timerID === ti.timer_id);
+	});
+	selectedTimerLastInterval = $derived.by(() => {
+		const timerID = this.selectedTimerID ?? 'focus';
+		let lastTimerInterval: TimerInterval | null = null;
+		for (const ti of this.selectedTimerIntervals) {
+			if (ti.timer_id === timerID) {
+				if (!lastTimerInterval) {
+					lastTimerInterval = ti;
+				} else {
+					if (ti.start_time > lastTimerInterval.start_time) {
+						lastTimerInterval = ti;
+					}
+				}
+			}
+		}
+		return lastTimerInterval;
+	});
 
 	constructor() {}
 
@@ -128,7 +175,7 @@ export class AppDataService {
 		return this.tasksMap.set(task.id, task);
 	}
 
-	createTimer(name: string) {
+	createTimer(name: string): Timer {
 		const timer: Timer = {
 			id: crypto.randomUUID(),
 			name: name,
@@ -139,47 +186,20 @@ export class AppDataService {
 		return this.timersMap.set(timer.id, timer);
 	}
 
-	fetchListTasks(listID: string): Task[] {
-		const listTasks: Task[] = [];
-		for (const task of this.tasksMap.values()) {
-			if (task.list_id === listID || listID === 'all') {
-				listTasks.push(task);
-			}
-		}
-		return listTasks;
+	updateTask(t: Task): void {
+		this.tasksMap.set(t.id, t);
 	}
 
-	updateTask(t: Task): Task {
-		return this.tasksMap.set(t.id, t);
-	}
-
-	fetchLastTimerInterval(t: Timer | null): TimerInterval | null {
-		const timerID = t ? t.id : 'focus';
-
-		let lastTimerInterval: TimerInterval | null = null;
-		for (const ti of this.timerIntervalsMap.values()) {
-			if (ti.timer_id === timerID) {
-				if (!lastTimerInterval) {
-					lastTimerInterval = ti;
-				} else {
-					if (ti.start_time > lastTimerInterval.start_time) {
-						lastTimerInterval = ti;
-					}
-				}
-			}
-		}
-		return lastTimerInterval;
-	}
-
-	toggleTimer(t: Timer | null): TimerInterval {
-		const timerID = t ? t.id : 'focus';
-		const lastTimerInterval = this.fetchLastTimerInterval(t);
+	toggleTimer(): void {
+		const timerID = this.state.selectedTimerID ? this.state.selectedTimerID : 'focus';
+		const lastTimerInterval = this.state.selectedTimerLastInterval;
 
 		if (lastTimerInterval && lastTimerInterval.end_time === null) {
-			return this.timerIntervalsMap.set(lastTimerInterval.id, {
+			this.timerIntervalsMap.set(lastTimerInterval.id, {
 				...lastTimerInterval,
 				end_time: getUnixEpochFromNow()
 			});
+			return;
 		}
 
 		const timerInterval: TimerInterval = {
@@ -189,11 +209,13 @@ export class AppDataService {
 			task_id: null,
 			timer_id: timerID
 		};
-		return this.timerIntervalsMap.set(timerInterval.id, timerInterval);
+		this.timerIntervalsMap.set(timerInterval.id, timerInterval);
 	}
 
-	attachTaskToTimer(t: Timer, task: Task) {
-		return this.timersMap.set(t.id, { ...t, task_id: task.id });
+	attachTaskToTimer(task: Task): void {
+		const timer = this.state.selectedTimer;
+		if (!timer) return;
+		this.timersMap.set(timer.id, { ...timer, task_id: task.id });
 	}
 }
 

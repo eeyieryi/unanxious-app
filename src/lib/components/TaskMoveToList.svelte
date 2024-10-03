@@ -8,27 +8,26 @@
 	const dataService = getAppDataService();
 
 	type Props = {
-		t: Task;
+		task: Task;
 		availableLists: List[];
 	};
-	let { t, availableLists }: Props = $props();
+	let { task, availableLists }: Props = $props();
 
 	async function moveToList(listID: string) {
-		if (t.list_id === listID) {
+		if (task.list_id === listID) {
 			return;
 		}
-		const tu = dataService.updateTask({
-			...t,
+		dataService.updateTask({
+			...task,
 			list_id: listID
 		});
-		dataService.state.updateTask(tu);
 	}
 </script>
 
 <Dialog.Root>
 	<Dialog.Trigger
-		>{t.list_id
-			? (availableLists.find((l) => l.id === t.list_id)?.name ?? 'No List')
+		>{task.list_id
+			? (availableLists.find((l) => l.id === task.list_id)?.name ?? 'No List')
 			: 'No List'}</Dialog.Trigger>
 	<Dialog.Content class="w-full max-w-48">
 		<Dialog.Title>Select List</Dialog.Title>

@@ -5,17 +5,12 @@
 
 	const dataService = getAppDataService();
 
-	async function toggleTaskCompleted() {
-		const tu = dataService.updateTask({ ...t, completed: !t.completed });
-		dataService.state.updateTask(tu);
-	}
-
 	type Props = {
-		t: Task;
+		task: Task;
 	};
-	let { t }: Props = $props();
+	let { task }: Props = $props();
 </script>
 
 <Checkbox
-	onCheckedChange={() => toggleTaskCompleted()}
-	checked={t.completed} />
+	onCheckedChange={() => dataService.updateTask({ ...task, completed: !task.completed })}
+	checked={task.completed} />
