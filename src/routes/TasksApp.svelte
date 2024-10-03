@@ -31,6 +31,10 @@
 	let selectedList = $state('inbox');
 </script>
 
+<svelte:head>
+	<title>Unanxious :: Tasks</title>
+</svelte:head>
+
 <nav class="flex w-full min-w-[200px] max-w-[200px] flex-col space-y-2 border-r px-2 py-2">
 	<header class="flex items-center space-x-2">
 		<ListTodo />

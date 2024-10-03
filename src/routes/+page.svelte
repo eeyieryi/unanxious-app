@@ -19,6 +19,10 @@
 	setAppDataService();
 </script>
 
+<svelte:head>
+	<title>Unanxious APP</title>
+</svelte:head>
+
 <div class="flex w-full flex-row">
 	<nav class="flex w-full min-w-[40px] max-w-[40px] flex-col items-center border-r">
 		<Button

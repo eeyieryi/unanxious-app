@@ -67,6 +67,10 @@
 	let createTimerName = $state('');
 </script>
 
+<svelte:head>
+	<title>Unanxious :: Focus</title>
+</svelte:head>
+
 <div class="flex h-screen w-full min-w-[460px] max-w-[460px] flex-col space-y-8 border-r px-2 py-2">
 	<div class="flex items-center justify-between">
 		{#if selectedTimer}
