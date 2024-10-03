@@ -9,6 +9,10 @@
 	let actionsEnabled = $state(false);
 </script>
 
+<svelte:head>
+	<title>Unanxious :: Settings</title>
+</svelte:head>
+
 <div class="flex w-full min-w-[460px] max-w-[460px] flex-col space-y-4 border-r px-2 py-2">
 	<header class="my-12 text-center">
 		<h1 class="font-medium capitalize">settings</h1>

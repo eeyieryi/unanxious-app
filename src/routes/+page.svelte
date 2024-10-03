@@ -15,7 +15,7 @@
 
 	const themeToggler = new ThemeToggler();
 
-	let selectedApp = $state<'tasks' | 'focus' | 'settings'>('settings');
+	let selectedApp = $state<'tasks' | 'focus' | 'settings'>('focus');
 
 	setAppDataService();
 </script>
