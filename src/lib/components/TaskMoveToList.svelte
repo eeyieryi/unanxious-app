@@ -3,16 +3,9 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { buttonVariants } from '$lib/components/ui/button';
 
-	import {
-		type List,
-		type Task,
-		fetchAPI,
-		isAPIResponseError,
-		logAPIResponseErrorToConsole
-	} from '$lib/api';
-	import { getAppState } from '$lib/app-state.svelte';
+	import { getAppDataService, type List, type Task } from '$lib/data-service.svelte';
 
-	const appState = getAppState();
+	const dataService = getAppDataService();
 
 	type Props = {
 		t: Task;
@@ -20,36 +13,29 @@
 	};
 	let { t, availableLists }: Props = $props();
 
-	async function moveToList(listID: string | null) {
+	async function moveToList(listID: string) {
 		if (t.list_id === listID) {
 			return;
 		}
-		const apiResponse = await fetchAPI<Task>(fetch, `/tasks/${t.id}/move-to-list`, {
-			method: 'PATCH',
-			body: JSON.stringify({
-				list_id: listID
-			})
+		const tu = dataService.updateTask({
+			...t,
+			list_id: listID
 		});
-		if (isAPIResponseError(apiResponse)) {
-			logAPIResponseErrorToConsole(apiResponse);
-			// handle error
-			return;
-		}
-		appState.updateTask(apiResponse.data);
+		dataService.state.updateTask(tu);
 	}
 </script>
 
 <Dialog.Root>
 	<Dialog.Trigger
 		>{t.list_id
-			? (availableLists.find((l) => l.id === t.list_id)?.title ?? 'No List')
+			? (availableLists.find((l) => l.id === t.list_id)?.name ?? 'No List')
 			: 'No List'}</Dialog.Trigger>
 	<Dialog.Content class="w-full max-w-48">
 		<Dialog.Title>Select List</Dialog.Title>
 		<ul>
 			<li>
 				<Dialog.Close
-					onclick={() => moveToList(null)}
+					onclick={() => moveToList('inbox')}
 					class={cn(buttonVariants({ variant: 'ghost' }), 'w-full')}>Inbox</Dialog.Close>
 			</li>
 			{#each availableLists as availableList (availableList.id)}
@@ -57,7 +43,7 @@
 					<Dialog.Close
 						onclick={() => moveToList(availableList.id)}
 						class={cn(buttonVariants({ variant: 'ghost' }), 'w-full')}
-						>{availableList.title}</Dialog.Close>
+						>{availableList.name}</Dialog.Close>
 				</li>
 			{/each}
 		</ul>

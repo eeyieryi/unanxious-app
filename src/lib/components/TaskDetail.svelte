@@ -1,13 +1,13 @@
 <script lang="ts">
 	import TaskView from '$lib/components/TaskView.svelte';
 
-	import { getAppState } from '$lib/app-state.svelte';
+	import { getAppDataService } from '$lib/data-service.svelte';
 
-	const appState = getAppState();
+	const dataService = getAppDataService();
 </script>
 
 <div class="flex flex-col p-4">
-	{#if appState.selectedTask}
-		<TaskView task={appState.selectedTask} />
+	{#if dataService.state.selectedTask}
+		<TaskView task={dataService.state.selectedTask} />
 	{/if}
 </div>

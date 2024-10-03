@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { Plus, ListTodo } from 'lucide-svelte';
 
 	import { Input } from '$lib/components/ui/input';
@@ -8,10 +7,9 @@
 
 	import TaskList from '$lib/components/TaskList.svelte';
 
-	import { getAppState } from '$lib/app-state.svelte';
-	import { createList, fetchLists } from '$lib/api-legacy';
+	import { getAppDataService } from '$lib/data-service.svelte';
 
-	const appState = getAppState();
+	const appDataService = getAppDataService();
 
 	type PremadeListItem = {
 		id: string;
@@ -31,10 +29,6 @@
 	let createTaskForm = $state<HTMLFormElement>();
 	let createTaskFormTitleInput = $state('');
 	let selectedList = $state('inbox');
-
-	onMount(async () => {
-		appState.lists = await fetchLists(fetch);
-	});
 </script>
 
 <nav class="flex w-full min-w-[200px] max-w-[200px] flex-col space-y-2 border-r px-2 py-2">
@@ -60,11 +54,9 @@
 		{@render item(premadeItem)}
 	{/each}
 
-	{#if appState}
-		{#each appState.lists as l}
-			{@render item({ title: l.title, id: l.id })}
-		{/each}
-	{/if}
+	{#each appDataService.state.lists as l}
+		{@render item({ title: l.name, id: l.id })}
+	{/each}
 
 	<Separator />
 
@@ -73,9 +65,9 @@
 		class="mt-2 flex flex-row space-x-2"
 		onsubmit={async (e) => {
 			e.preventDefault();
-			const list = await createList(fetch, createTaskFormTitleInput);
+			const list = appDataService.createList(createTaskFormTitleInput);
 			if (list) {
-				appState.lists = [...appState.lists, list];
+				appDataService.state.lists = [...appDataService.state.lists, list];
 				selectedList = list.id;
 				createTaskForm?.reset();
 			}
@@ -91,10 +83,4 @@
 	</form>
 </nav>
 
-{#if selectedList}
-	<TaskList listID={selectedList} />
-{:else}
-	<div class="p-4">
-		<h1>Select a list on the left</h1>
-	</div>
-{/if}
+<TaskList listID={selectedList} />

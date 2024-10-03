@@ -8,16 +8,15 @@
 
 	import TasksApp from './TasksApp.svelte';
 	import FocusApp from './FocusApp.svelte';
-	import TestPage from './TestPage.svelte';
 
-	import { setAppState } from '$lib/app-state.svelte';
 	import { ThemeToggler } from '$lib/toggle-theme/theme-toggler.svelte';
+	import { setAppDataService } from '$lib/data-service.svelte';
 
 	const themeToggler = new ThemeToggler();
 
-	let selectedApp = $state<'tasks' | 'focus' | 'test'>('test');
+	let selectedApp = $state<'tasks' | 'focus'>('focus');
 
-	setAppState();
+	setAppDataService();
 </script>
 
 <div class="flex w-full flex-row">
@@ -80,8 +79,6 @@
 		<TasksApp />
 	{:else if selectedApp === 'focus'}
 		<FocusApp />
-	{:else if selectedApp === 'test'}
-		<TestPage />
 	{:else}
 		<h1>No App Selected</h1>
 	{/if}
