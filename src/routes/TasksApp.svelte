@@ -67,7 +67,6 @@
 			e.preventDefault();
 			const list = appDataService.createList(createTaskFormTitleInput);
 			if (list) {
-				appDataService.state.lists = [...appDataService.state.lists, list];
 				selectedList = list.id;
 				createTaskForm?.reset();
 			}
