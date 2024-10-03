@@ -11,25 +11,10 @@ class AppState {
 	lists = $state<List[]>([]);
 	timers = $state<Timer[]>([]);
 	timerIntervals = $state<TimerInterval[]>([]);
-
 	selectedTaskID = $state<string | null>(null);
-	selectedTask = $derived.by(() => {
-		const selectedTaskID = this.selectedTaskID;
-		if (selectedTaskID) {
-			const found = this.tasks.find((task) => selectedTaskID === task.id);
-			if (found) return found;
-		}
-		return null;
-	});
-	selectedTaskList = $derived.by(() => {
-		const selectedTask = this.selectedTask;
-		if (selectedTask) {
-			const found = this.lists.find((list) => selectedTask.list_id === list.id);
-			if (found) return found;
-		}
-		return null;
-	});
 	selectedListID = $state<string>('inbox');
+	selectedTimerID = $state<string | null>(null);
+
 	selectedList = $derived.by(() => {
 		const listID = this.selectedListID;
 		if (listID) {
@@ -46,8 +31,23 @@ class AppState {
 			return task.list_id === this.selectedListID;
 		})
 	);
+	selectedTask = $derived.by(() => {
+		const selectedTaskID = this.selectedTaskID;
+		if (selectedTaskID) {
+			const found = this.tasks.find((task) => selectedTaskID === task.id);
+			if (found) return found;
+		}
+		return null;
+	});
+	selectedTaskList = $derived.by(() => {
+		const selectedTask = this.selectedTask;
+		if (selectedTask) {
+			const found = this.lists.find((list) => selectedTask.list_id === list.id);
+			if (found) return found;
+		}
+		return null;
+	});
 
-	selectedTimerID = $state<string | null>(null);
 	selectedTimer = $derived.by(() => {
 		const selectedTimerID = this.selectedTimerID;
 		if (selectedTimerID) {
@@ -99,6 +99,8 @@ export class AppDataService {
 	readonly timersMap;
 	readonly timerIntervalsMap;
 
+	clearData: (() => Promise<void>) | undefined = undefined;
+
 	constructor() {
 		this.doc = new Doc();
 		this.state = new AppState();
@@ -149,6 +151,18 @@ export class AppDataService {
 		indexeddbProvider.whenSynced.then(() => {
 			console.log('loaded data from indexed db');
 		});
+		this.clearData = async () => {
+			await indexeddbProvider.clearData();
+			this.state.tasks = [];
+			this.state.lists = [];
+			this.state.timers = [];
+			this.state.timerIntervals = [];
+			this.state.selectedListID = 'inbox';
+			this.state.selectedTaskID = null;
+			this.state.selectedTimerID = null;
+			this.doc.destroy();
+			location.reload();
+		};
 	}
 
 	createList(name: string, id?: string): List {
