@@ -4,12 +4,20 @@ export function formatDueAt(seconds: number): string {
 	return moment().to(getDateTimeFromUnixEpoch(seconds));
 }
 
+export function millisecondsToSeconds(ms: number) {
+	return ms / 1000.0;
+}
+
+export function secondsToMilliseconds(s: number) {
+	return s * 1000.0;
+}
+
 export function getDateTimeFromUnixEpoch(unixepoch: number) {
-	return new Date(unixepoch * 1000); // convert seconds to milliseconds
+	return new Date(secondsToMilliseconds(unixepoch));
 }
 
 export function getUnixEpochFromNow(): number {
-	return new Date().getTime() / 1000.0; // convert milliseconds to seconds
+	return millisecondsToSeconds(new Date().getTime());
 }
 
 export type DHMS = {

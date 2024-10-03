@@ -7,17 +7,16 @@
 	import { Calendar } from '$lib/components/ui/calendar';
 	import { buttonVariants } from '$lib/components/ui/button';
 
-	import { formatDueAt } from '$lib/datetime';
+	import { formatDueAt, millisecondsToSeconds } from '$lib/datetime';
 	import { getAppDataService, type Task } from '$lib/data-service.svelte';
 
 	const dataService = getAppDataService();
 
-	async function updateTaskDueAt(dueAt: DateValue | null) {
-		const tu = dataService.updateTask({
+	function updateTaskDueAt(dueAt: DateValue | null) {
+		dataService.updateTask({
 			...task,
-			due_at: dueAt === null ? null : dueAt.toDate('UTC').valueOf()
+			due_at: dueAt === null ? null : millisecondsToSeconds(dueAt.toDate('UTC').valueOf())
 		});
-		dataService.state.updateTask(tu);
 	}
 
 	function save() {
@@ -25,7 +24,9 @@
 		updateTaskDueAt(dateValue);
 	}
 
-	type Props = { task: Task };
+	type Props = {
+		task: Task;
+	};
 	let { task }: Props = $props();
 
 	let taskDueAt: number | undefined = $derived(task.due_at ?? undefined);
