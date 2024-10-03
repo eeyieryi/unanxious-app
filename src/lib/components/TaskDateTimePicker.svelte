@@ -7,35 +7,17 @@
 	import { Calendar } from '$lib/components/ui/calendar';
 	import { buttonVariants } from '$lib/components/ui/button';
 
-	import {
-		type Task,
-		type UpdateTaskDueAtDTO,
-		fetchAPI,
-		isAPIResponseError,
-		logAPIResponseErrorToConsole
-	} from '$lib/api';
 	import { formatDueAt } from '$lib/datetime';
-	import { getAppState } from '$lib/app-state.svelte';
+	import { getAppDataService, type Task } from '$lib/data-service.svelte';
 
-	const appState = getAppState();
+	const dataService = getAppDataService();
 
 	async function updateTaskDueAt(dueAt: DateValue | null) {
-		let updateTaskDueAtDTO: UpdateTaskDueAtDTO = {
-			due_at: undefined
-		};
-		if (dueAt) {
-			updateTaskDueAtDTO.due_at = dueAt.toDate('UTC').valueOf();
-		}
-		const apiResponse = await fetchAPI<Task>(fetch, `/tasks/${task.id}/update-due-at`, {
-			method: 'PATCH',
-			body: JSON.stringify(updateTaskDueAtDTO)
+		const tu = dataService.updateTask({
+			...task,
+			due_at: dueAt === null ? null : dueAt.toDate('UTC').valueOf()
 		});
-		if (isAPIResponseError(apiResponse)) {
-			logAPIResponseErrorToConsole(apiResponse);
-			// handle error
-			return;
-		}
-		appState.updateTask(apiResponse.data);
+		dataService.state.updateTask(tu);
 	}
 
 	function save() {

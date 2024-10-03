@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-
 	import { ArrowLeft } from 'lucide-svelte';
 
 	import { Input } from '$lib/components/ui/input';
@@ -11,22 +9,21 @@
 	import TaskMoveToList from '$lib/components/TaskMoveToList.svelte';
 	import TaskDateTimePicker from '$lib/components/TaskDateTimePicker.svelte';
 
-	import { getAppState } from '$lib/app-state.svelte';
-	import { fetchAPI, isAPIResponseError, logAPIResponseErrorToConsole, type Task } from '$lib/api';
+	import { getAppDataService, type Task } from '$lib/data-service.svelte';
 
 	type TaskViewProps = {
 		task: Task;
 	};
 	let { task }: TaskViewProps = $props();
 
-	const appState = getAppState();
+	const dataService = getAppDataService();
 
-	let taskTitle = {
+	let taskName = {
 		get value() {
-			return task?.title;
+			return task?.name;
 		},
 		set value(v) {
-			task.title = v;
+			task.name = v;
 		}
 	};
 	let taskDescription = {
@@ -38,36 +35,18 @@
 		}
 	};
 
-	async function updateTaskTitle(): Promise<Task | void> {
-		if (!task) return;
-		const apiResponse = await fetchAPI<Task>(fetch, `/tasks/${task.id}/update-title`, {
-			method: 'PATCH',
-			body: JSON.stringify({
-				title: taskTitle.value
-			})
+	function updateTaskName(): Task {
+		return dataService.updateTask({
+			...task,
+			name: taskName.value
 		});
-		if (isAPIResponseError(apiResponse)) {
-			logAPIResponseErrorToConsole(apiResponse);
-			// handle error
-			return;
-		}
-		return apiResponse.data;
 	}
 
-	async function updateTaskDescription(): Promise<Task | void> {
-		if (!task) return;
-		const apiResponse = await fetchAPI<Task>(fetch, `/tasks/${task.id}/update-description`, {
-			method: 'PATCH',
-			body: JSON.stringify({
-				description: taskDescription.value
-			})
+	function updateTaskDescription(): Task {
+		return dataService.updateTask({
+			...task,
+			description: taskDescription.value
 		});
-		if (isAPIResponseError(apiResponse)) {
-			logAPIResponseErrorToConsole(apiResponse);
-			// handle error
-			return;
-		}
-		return apiResponse.data;
 	}
 </script>
 
@@ -75,11 +54,13 @@
 	<Button
 		variant="link"
 		size="icon"
-		href="/lists/{$page.params.name}/tasks">
+		onclick={() => {
+			dataService.state.selectedTaskID = null;
+		}}>
 		<ArrowLeft />
 	</Button>
 	<TaskMoveToList
-		availableLists={appState.lists}
+		availableLists={dataService.state.lists}
 		t={task} />
 </div>
 
@@ -90,24 +71,14 @@
 
 <div class="mt-4 flex flex-col space-y-4">
 	<Input
-		onchange={async () => {
-			const tu = await updateTaskTitle();
-			if (tu) {
-				appState.updateTask(tu);
-			}
-		}}
+		onchange={() => updateTaskName()}
 		onkeyup={() => {
-			appState.updateTask({ ...task, title: taskTitle.value });
+			dataService.state.updateTask({ ...task, name: taskName.value });
 		}}
 		type="text"
 		placeholder="No title"
-		bind:value={taskTitle.value} />
+		bind:value={taskName.value} />
 	<Textarea
-		onchange={async () => {
-			const tu = await updateTaskDescription();
-			if (tu) {
-				appState.updateTask(tu);
-			}
-		}}
+		onchange={() => updateTaskDescription()}
 		bind:value={taskDescription.value}></Textarea>
 </div>
