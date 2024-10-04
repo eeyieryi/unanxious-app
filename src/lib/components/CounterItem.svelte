@@ -30,7 +30,7 @@
 			<Minus class="h-4 w-4" />
 			<span class="sr-only">decrease</span>
 		</Button>
-		<div class="flex h-8 w-8 items-center justify-center border-y">
+		<div class="flex h-8 w-16 items-center justify-center border-y">
 			<span class="font-mono">{counterStats.total}</span>
 		</div>
 		<Button
