@@ -1,3 +1,4 @@
+import { SvelteMap } from 'svelte/reactivity';
 import { getContext, onMount, setContext } from 'svelte';
 
 import { applyUpdate, Doc } from 'yjs';
@@ -11,11 +12,27 @@ class AppState {
 	lists = $state<List[]>([]);
 	timers = $state<Timer[]>([]);
 	timerIntervals = $state<TimerInterval[]>([]);
-	selectedTaskID = $state<string | null>(null);
 	selectedListID = $state<string>('inbox');
+	selectedTaskID = $state<string | null>(null);
 	selectedTimerID = $state<string | null>(null);
+	counters = $state<Counter[]>([]);
+	countersRecords = $state(new SvelteMap<string, CounterRecord[]>());
+	countersStats = $state(new SvelteMap<string, CounterStats>());
 
-	selectedList = $derived.by(() => {
+	reset() {
+		this.tasks = [];
+		this.lists = [];
+		this.timers = [];
+		this.timerIntervals = [];
+		this.selectedListID = 'inbox';
+		this.selectedTaskID = null;
+		this.selectedTimerID = null;
+		this.counters = [];
+		this.countersRecords.clear();
+		this.countersStats.clear();
+	}
+
+	readonly selectedList = $derived.by(() => {
 		const listID = this.selectedListID;
 		if (listID) {
 			const found = this.lists.find((list) => listID === list.id);
@@ -77,8 +94,6 @@ class AppState {
 		return lastTimerInterval;
 	});
 
-	constructor() {}
-
 	updateTask(t: Task) {
 		this.tasks = this.tasks.map((task) => {
 			if (t.id === task.id) {
@@ -98,6 +113,8 @@ export class AppDataService {
 	readonly tasksMap;
 	readonly timersMap;
 	readonly timerIntervalsMap;
+	readonly countersMap;
+	readonly counterRecordsMap;
 
 	clearData: (() => Promise<void>) | undefined = undefined;
 
@@ -113,6 +130,8 @@ export class AppDataService {
 		this.tasksMap = this.doc.getMap<Task>('tasks');
 		this.timersMap = this.doc.getMap<Timer>('timers');
 		this.timerIntervalsMap = this.doc.getMap<TimerInterval>('timer_intervals');
+		this.countersMap = this.doc.getMap<Counter>('counters');
+		this.counterRecordsMap = this.doc.getMap<CounterRecord[]>('counter_records');
 
 		this.doc.on('update', (update) => {
 			applyUpdate(this.doc, update);
@@ -123,6 +142,7 @@ export class AppDataService {
 				this.state.lists = Array.from(this.listsMap.values());
 			}
 		});
+
 		this.tasksMap.observe((event) => {
 			if (event.keysChanged.size !== 0) {
 				this.state.tasks = Array.from(this.tasksMap.values());
@@ -141,8 +161,43 @@ export class AppDataService {
 			}
 		});
 
+		this.countersMap.observe((event) => {
+			if (event.keysChanged.size !== 0) {
+				this.state.counters = Array.from(this.countersMap.values());
+			}
+		});
+
+		this.counterRecordsMap.observe((event) => {
+			if (event.keysChanged.size !== 0) {
+				for (const counterID of event.keysChanged) {
+					const counter = this.countersMap.get(counterID) || null;
+					if (counter === null) {
+						// Counter got deleted
+						this.state.countersRecords.delete(counterID);
+						this.state.countersStats.delete(counterID);
+						return;
+					}
+
+					const current = this.counterRecordsMap.get(counterID) || [];
+					const counterStats: CounterStats = {
+						total: 0
+					};
+					for (const record of current) {
+						counterStats.total += record.increased_by ?? 0;
+						counterStats.total -= record.decreased_by ?? 0;
+					}
+					this.state.countersRecords.set(counterID, current);
+					this.state.countersStats.set(counterID, counterStats);
+				}
+			}
+		});
+
 		onMount(() => {
 			this.enablePersist();
+			return () => {
+				this.doc.destroy();
+				this.state.reset();
+			};
 		});
 	}
 
@@ -153,14 +208,8 @@ export class AppDataService {
 		});
 		this.clearData = async () => {
 			await indexeddbProvider.clearData();
-			this.state.tasks = [];
-			this.state.lists = [];
-			this.state.timers = [];
-			this.state.timerIntervals = [];
-			this.state.selectedListID = 'inbox';
-			this.state.selectedTaskID = null;
-			this.state.selectedTimerID = null;
 			this.doc.destroy();
+			this.state.reset();
 			location.reload();
 		};
 	}
@@ -198,6 +247,43 @@ export class AppDataService {
 			updated_at: getUnixEpochFromNow()
 		};
 		return this.timersMap.set(timer.id, timer);
+	}
+
+	createCounter(name: string, step: number) {
+		const counter: Counter = {
+			id: crypto.randomUUID(),
+			name: name,
+			step: step
+		};
+		this.countersMap.set(counter.id, counter);
+	}
+
+	increaseCounter(counter: Counter, by: number) {
+		const current = this.counterRecordsMap.get(counter.id) || [];
+		const counterRecord: CounterRecord = {
+			counter_id: counter.id,
+			increased_by: by,
+			created_at: getUnixEpochFromNow()
+		};
+		this.counterRecordsMap.set(counter.id, [counterRecord, ...current]);
+	}
+
+	decreaseCounter(counter: Counter, by: number) {
+		const current = this.counterRecordsMap.get(counter.id) || [];
+		const counterRecord: CounterRecord = {
+			counter_id: counter.id,
+			decreased_by: by,
+			created_at: getUnixEpochFromNow()
+		};
+		this.counterRecordsMap.set(counter.id, [counterRecord, ...current]);
+	}
+
+	deleteCounter(counter: Counter) {
+		this.countersMap.delete(counter.id);
+	}
+
+	resetCounter(counter: Counter) {
+		this.counterRecordsMap.delete(counter.id);
 	}
 
 	updateTask(t: Task): void {
@@ -273,4 +359,21 @@ export interface TimerInterval {
 	task_id: string | null;
 	start_time: number;
 	end_time: number | null;
+}
+
+export interface Counter {
+	id: string;
+	name: string;
+	step: number;
+}
+
+export interface CounterRecord {
+	counter_id: string;
+	increased_by?: number;
+	decreased_by?: number;
+	created_at: number;
+}
+
+export interface CounterStats {
+	total: number;
 }

@@ -1,13 +1,16 @@
 <script lang="ts">
 	import '../app.css';
 
-	import { CheckCheck, Timer, Sun, Moon, Settings } from 'lucide-svelte';
+	import { onMount } from 'svelte';
+
+	import { CheckCheck, Timer, Sun, Moon, Settings, Tally5 } from 'lucide-svelte';
 
 	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
 
 	import TasksApp from './TasksApp.svelte';
 	import FocusApp from './FocusApp.svelte';
+	import CounterApp from './CounterApp.svelte';
 	import SettingsPage from './SettingsPage.svelte';
 
 	import { ThemeToggler } from '$lib/toggle-theme/theme-toggler.svelte';
@@ -15,7 +18,29 @@
 
 	const themeToggler = new ThemeToggler();
 
-	let selectedApp = $state<'tasks' | 'focus' | 'settings'>('focus');
+	let selectedPage = $state<AvailablePages>('focus');
+
+	const availablePages = ['tasks', 'focus', 'settings', 'counter'] as const;
+	type AvailablePages = (typeof availablePages)[number];
+	function isAvailablePage(name: string): name is AvailablePages {
+		for (const page of availablePages) {
+			if (name === page) {
+				return true;
+			}
+		}
+		return false;
+	}
+	const INITIAL_PAGE_KEY = 'initialPage';
+	function selectPage(page: AvailablePages) {
+		selectedPage = page;
+		localStorage.setItem(INITIAL_PAGE_KEY, page);
+	}
+	onMount(() => {
+		const initialPage = localStorage.getItem(INITIAL_PAGE_KEY);
+		if (initialPage && isAvailablePage(initialPage)) {
+			selectPage(initialPage);
+		}
+	});
 
 	setAppDataService();
 </script>
@@ -37,7 +62,7 @@
 
 		<Separator />
 
-		{#if selectedApp === 'tasks'}
+		{#if selectedPage === 'tasks'}
 			<Button
 				disabled
 				variant="ghost"
@@ -46,9 +71,7 @@
 			</Button>
 		{:else}
 			<Button
-				onclick={() => {
-					selectedApp = 'tasks';
-				}}
+				onclick={() => selectPage('tasks')}
 				class="hover:rounded-none hover:outline-none"
 				variant="ghost"
 				size="icon">
@@ -58,7 +81,7 @@
 
 		<Separator />
 
-		{#if selectedApp === 'focus'}
+		{#if selectedPage === 'focus'}
 			<Button
 				disabled
 				variant="ghost"
@@ -67,20 +90,37 @@
 			</Button>
 		{:else}
 			<Button
-				onclick={() => {
-					selectedApp = 'focus';
-				}}
+				onclick={() => selectPage('focus')}
 				class="hover:rounded-none hover:outline-none"
 				variant="ghost"
 				size="icon">
 				<Timer class="h-6 w-6" />
+			</Button>
+		{/if}
+
+		<Separator />
+
+		{#if selectedPage === 'counter'}
+			<Button
+				disabled
+				variant="ghost"
+				size="icon">
+				<Tally5 class="h-6 w-6" />
+			</Button>
+		{:else}
+			<Button
+				onclick={() => selectPage('counter')}
+				class="hover:rounded-none hover:outline-none"
+				variant="ghost"
+				size="icon">
+				<Tally5 class="h-6 w-6" />
 			</Button>
 		{/if}
 
 		<Separator />
 
 		<Separator class="mt-auto" />
-		{#if selectedApp === 'settings'}
+		{#if selectedPage === 'settings'}
 			<Button
 				disabled
 				variant="ghost"
@@ -89,9 +129,7 @@
 			</Button>
 		{:else}
 			<Button
-				onclick={() => {
-					selectedApp = 'settings';
-				}}
+				onclick={() => selectPage('settings')}
 				class="hover:rounded-none hover:outline-none"
 				variant="ghost"
 				size="icon">
@@ -100,12 +138,14 @@
 		{/if}
 	</nav>
 
-	{#if selectedApp === 'tasks'}
+	{#if selectedPage === 'tasks'}
 		<TasksApp />
-	{:else if selectedApp === 'focus'}
+	{:else if selectedPage === 'focus'}
 		<FocusApp />
-	{:else if selectedApp === 'settings'}
+	{:else if selectedPage === 'settings'}
 		<SettingsPage />
+	{:else if selectedPage === 'counter'}
+		<CounterApp />
 	{:else}
 		<h1>No App Selected</h1>
 	{/if}
