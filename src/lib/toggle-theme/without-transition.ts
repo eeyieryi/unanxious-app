@@ -44,8 +44,8 @@ export const withoutTransition = (action: () => unknown) => {
 
 	// Fallback
 	disable();
-	timeoutAction = setTimeout(() => {
+	timeoutAction = window.setTimeout(() => {
 		action();
-		timeoutEnable = setTimeout(enable, 120);
+		timeoutEnable = window.setTimeout(enable, 120);
 	}, 120);
 };
