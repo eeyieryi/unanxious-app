@@ -9,6 +9,7 @@
 
 	import TimerDigits from '$lib/components/TimerDigits.svelte';
 
+	import { dhms, padWithZero } from '$lib/datetime';
 	import { getAppDataService } from '$lib/data-service.svelte';
 
 	const dataService = getAppDataService();
@@ -35,6 +36,9 @@
 	const availableToAttachTasks = $derived(
 		dataService.state.tasks.filter((t) => !timerTaskIDs.includes(t.id))
 	);
+
+	let selectedTimerStatsToday = $derived(dhms(dataService.state.selectedTimerStats.today));
+	let selectedTimerStatsTotal = $derived(dhms(dataService.state.selectedTimerStats.total));
 
 	let createTimerForm = $state<HTMLFormElement>();
 	let createTimerFormInputName = $state('');
@@ -109,6 +113,32 @@
 				<Pause />
 			{/if}
 		</Button>
+	</div>
+	<div class="flex justify-around text-center">
+		<div>
+			<span class="text-muted-foreground">Today</span>
+			<div class="flex items-center font-mono">
+				{#if selectedTimerStatsToday.hours > 0}
+					<span>{padWithZero(selectedTimerStatsToday.hours)}</span>
+					<span>:</span>
+				{/if}
+				<span>{padWithZero(selectedTimerStatsToday.minutes)}</span>
+				<span>:</span>
+				<span>{padWithZero(selectedTimerStatsToday.seconds)}</span>
+			</div>
+		</div>
+		<div>
+			<span class="text-muted-foreground">Total</span>
+			<div class="flex items-center font-mono">
+				{#if selectedTimerStatsTotal.hours > 0}
+					<span>{padWithZero(selectedTimerStatsTotal.hours)}</span>
+					<span>:</span>
+				{/if}
+				<span>{padWithZero(selectedTimerStatsTotal.minutes)}</span>
+				<span>:</span>
+				<span>{padWithZero(selectedTimerStatsTotal.seconds)}</span>
+			</div>
+		</div>
 	</div>
 	<form
 		bind:this={createTimerForm}

@@ -3,9 +3,10 @@ import { getContext, onMount, setContext } from 'svelte';
 
 import { applyUpdate, Doc } from 'yjs';
 import { IndexeddbPersistence } from 'y-indexeddb';
+import { fromDate, getLocalTimeZone, isToday } from '@internationalized/date';
 
 import { SyncService } from '$lib/sync.svelte';
-import { getUnixEpochFromNow } from '$lib/datetime';
+import { getUnixEpochFromNow, getDateTimeFromUnixEpoch } from '$lib/datetime';
 
 class AppState {
 	tasks = $state<Task[]>([]);
@@ -94,6 +95,28 @@ class AppState {
 			}
 		}
 		return lastTimerInterval;
+	});
+
+	readonly selectedTimerStats = $derived.by(() => {
+		const timerStats: TimerStats = {
+			today: 0,
+			total: 0
+		};
+		for (const ti of this.selectedTimerIntervals) {
+			if (ti.end_time) {
+				const seconds = ti.end_time - ti.start_time;
+				timerStats.total += seconds;
+				if (
+					isToday(
+						fromDate(getDateTimeFromUnixEpoch(ti.end_time), getLocalTimeZone()),
+						getLocalTimeZone()
+					)
+				) {
+					timerStats.today += seconds;
+				}
+			}
+		}
+		return timerStats;
 	});
 
 	updateTask(t: Task) {
@@ -361,6 +384,11 @@ export interface TimerInterval {
 	task_id: string | null;
 	start_time: number;
 	end_time: number | null;
+}
+
+export interface TimerStats {
+	today: number;
+	total: number;
 }
 
 export interface Counter {
