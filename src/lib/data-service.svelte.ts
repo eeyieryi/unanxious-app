@@ -40,7 +40,8 @@ class AppState {
 		}
 		return null;
 	});
-	selectedListTasks = $derived(
+
+	readonly selectedListTasks = $derived(
 		this.tasks.filter((task) => {
 			if (this.selectedListID === 'all') {
 				return true;
@@ -48,7 +49,8 @@ class AppState {
 			return task.list_id === this.selectedListID;
 		})
 	);
-	selectedTask = $derived.by(() => {
+
+	readonly selectedTask = $derived.by(() => {
 		const selectedTaskID = this.selectedTaskID;
 		if (selectedTaskID) {
 			const found = this.tasks.find((task) => selectedTaskID === task.id);
@@ -56,7 +58,8 @@ class AppState {
 		}
 		return null;
 	});
-	selectedTaskList = $derived.by(() => {
+
+	readonly selectedTaskList = $derived.by(() => {
 		const selectedTask = this.selectedTask;
 		if (selectedTask) {
 			const found = this.lists.find((list) => selectedTask.list_id === list.id);
@@ -65,7 +68,7 @@ class AppState {
 		return null;
 	});
 
-	selectedTimer = $derived.by(() => {
+	readonly selectedTimer = $derived.by(() => {
 		const selectedTimerID = this.selectedTimerID;
 		if (selectedTimerID) {
 			const found = this.timers.find((timer) => selectedTimerID === timer.id);
@@ -73,11 +76,13 @@ class AppState {
 		}
 		return null;
 	});
-	selectedTimerIntervals = $derived.by(() => {
+
+	readonly selectedTimerIntervals = $derived.by(() => {
 		const timerID = this.selectedTimerID ?? 'focus';
 		return this.timerIntervals.filter((ti) => timerID === ti.timer_id);
 	});
-	selectedTimerLastInterval = $derived.by(() => {
+
+	readonly selectedTimerLastInterval = $derived.by(() => {
 		const timerID = this.selectedTimerID ?? 'focus';
 		let lastTimerInterval: TimerInterval | null = null;
 		for (const ti of this.selectedTimerIntervals) {
