@@ -83,16 +83,13 @@ class AppState {
 	});
 
 	readonly selectedTimerLastInterval = $derived.by(() => {
-		const timerID = this.selectedTimerID ?? 'focus';
 		let lastTimerInterval: TimerInterval | null = null;
 		for (const ti of this.selectedTimerIntervals) {
-			if (ti.timer_id === timerID) {
-				if (!lastTimerInterval) {
+			if (!lastTimerInterval) {
+				lastTimerInterval = ti;
+			} else {
+				if (ti.start_time > lastTimerInterval.start_time) {
 					lastTimerInterval = ti;
-				} else {
-					if (ti.start_time > lastTimerInterval.start_time) {
-						lastTimerInterval = ti;
-					}
 				}
 			}
 		}
