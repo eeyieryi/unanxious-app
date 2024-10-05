@@ -6,6 +6,7 @@ import { IndexeddbPersistence } from 'y-indexeddb';
 import { fromDate, getLocalTimeZone, isToday } from '@internationalized/date';
 
 import { SyncService } from '$lib/sync.svelte';
+import { BackupService } from '$lib/backup-service.svelte';
 import { getUnixEpochFromNow, getDateTimeFromUnixEpoch } from '$lib/datetime';
 
 class AppState {
@@ -133,6 +134,7 @@ export class AppDataService {
 	readonly doc: Doc;
 	readonly state: AppState;
 	readonly syncService: SyncService;
+	readonly backupService: BackupService;
 
 	readonly listsMap;
 	readonly tasksMap;
@@ -150,6 +152,7 @@ export class AppDataService {
 			this.doc,
 			'demo-demo-demo' // Change this
 		);
+		this.backupService = new BackupService();
 
 		this.listsMap = this.doc.getMap<List>('lists');
 		this.tasksMap = this.doc.getMap<Task>('tasks');
@@ -219,6 +222,7 @@ export class AppDataService {
 
 		onMount(() => {
 			this.enablePersist();
+			this.backupService.dataService = this;
 			return () => {
 				this.doc.destroy();
 				this.state.reset();

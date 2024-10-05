@@ -27,6 +27,15 @@
 	<Button
 		class="w-full capitalize"
 		disabled={!actionsEnabled}
+		onclick={async () => {
+			if (confirm('Are you sure you want to export all data?')) {
+				dataService.backupService.export();
+			}
+		}}
+		variant="secondary">export&nbsp;data</Button>
+	<Button
+		class="w-full capitalize"
+		disabled={!actionsEnabled}
 		onclick={() => {
 			if (confirm('Are you sure you want to delete all data?')) {
 				if (dataService.clearData) {
