@@ -32,28 +32,32 @@ interface BackupData {
 	counterRecordsMap: Map<string, CounterRecord[]>;
 }
 
-function replacer(_key: string, data: AppData) {
-	const backupData: any = {};
-	for (const entry of Object.entries(data)) {
-		const [key, value] = entry;
-		const ymap = value as Y.Map<typeof value>;
-		const map = new Map<string, any>();
-		for (const [k, v] of ymap.entries()) {
-			map.set(k, v);
+function replacer(_key: string, value: any) {
+	if (value instanceof Object && value !== null && 'listsMap' in value) {
+		const backupData: any = {};
+		for (const entry of Object.entries(value)) {
+			const [backupMapKey, ymap] = entry;
+			const map = new Map<string, any>();
+			if (ymap instanceof Y.Map) {
+				for (const entry of ymap.entries()) {
+					const [key, value] = entry;
+					map.set(key, value);
+				}
+			}
+			backupData[backupMapKey] = { dataType: 'Map', value: Array.from(map.entries()) };
 		}
-		backupData[key] = Array.from(map.entries());
+		return backupData;
 	}
-	return JSON.stringify(backupData);
+	return value;
 }
 
 function reviver(_key: string, value: any) {
-	const data = JSON.parse(value);
-	const backupData: any = {};
-	for (const entry of Object.entries(data)) {
-		const [k, v] = entry;
-		backupData[k] = new Map(v as Iterable<readonly [unknown, unknown]>);
+	if (typeof value === 'object' && value !== null) {
+		if (value.dataType === 'Map') {
+			return new Map(value.value as Iterable<readonly [unknown, unknown]>);
+		}
 	}
-	return backupData as BackupData;
+	return value;
 }
 
 export class BackupService {
