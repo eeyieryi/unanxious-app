@@ -1,13 +1,19 @@
 <script lang="ts">
 	import { Save } from 'lucide-svelte';
-	import { type DateValue, fromAbsolute } from '@internationalized/date';
+	import {
+		type DateValue,
+		today,
+		toZoned,
+		fromAbsolute,
+		getLocalTimeZone
+	} from '@internationalized/date';
 
 	import { cn } from '$lib/utils';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Calendar } from '$lib/components/ui/calendar';
 	import { buttonVariants } from '$lib/components/ui/button';
 
-	import { formatDueAt, millisecondsToSeconds } from '$lib/datetime';
+	import { formatDueAt, millisecondsToSeconds, secondsToMilliseconds } from '$lib/datetime';
 	import { getAppDataService, type Task } from '$lib/data-service.svelte';
 
 	const dataService = getAppDataService();
@@ -29,10 +35,18 @@
 	};
 	let { task }: Props = $props();
 
+	function getInitialDateValue() {
+		return task.due_at
+			? fromAbsolute(secondsToMilliseconds(task.due_at), getLocalTimeZone())
+			: toZoned(today(getLocalTimeZone()), getLocalTimeZone());
+	}
+
 	let taskDueAt: number | undefined = $derived(task.due_at ?? undefined);
-	let dateValue: DateValue | undefined = $state(
-		task.due_at ? fromAbsolute(task.due_at * 1000, 'UTC') : undefined
-	);
+	let dateValue: DateValue | undefined = $state(getInitialDateValue());
+
+	$effect(() => {
+		dateValue = getInitialDateValue();
+	});
 </script>
 
 <Dialog.Root>
