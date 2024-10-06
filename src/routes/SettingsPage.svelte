@@ -16,19 +16,22 @@
 	<title>Unanxious :: Settings</title>
 </svelte:head>
 
-<div class="flex w-full min-w-[460px] max-w-[460px] flex-col space-y-4 border-r px-2 py-2">
+<div class="flex flex-col space-y-4">
 	<header class="my-12 text-center">
 		<h1 class="font-medium capitalize">settings</h1>
 	</header>
+
 	<Button
-		class="w-full capitalize"
+		class="capitalize"
 		variant="outline"
 		onclick={() => {
 			actionsEnabled = !actionsEnabled;
 		}}>{actionsEnabled ? 'disable' : 'enable'}&nbsp;actions</Button>
+
 	<Separator />
+
 	<Button
-		class="w-full capitalize"
+		class="capitalize"
 		disabled={!actionsEnabled}
 		onclick={async () => {
 			if (confirm('Are you sure you want to export all data?')) {
@@ -39,6 +42,8 @@
 
 	<div class="flex flex-col space-y-2 rounded-md border p-4">
 		<input
+			disabled={!actionsEnabled}
+			class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 			bind:this={importDataInputFile}
 			bind:files={files}
 			type="file"
@@ -49,7 +54,7 @@
 			onclick={() => importDataInputFile?.click()}>Select backup file to import</Button>
 
 		<Button
-			class="w-full capitalize"
+			class="capitalize"
 			disabled={!actionsEnabled || !files || files.length !== 1}
 			onclick={async () => {
 				if (!files) return;
@@ -66,8 +71,11 @@
 			}}
 			variant="destructive">import&nbsp;data</Button>
 	</div>
+
+	<Separator />
+
 	<Button
-		class="w-full capitalize"
+		class="capitalize"
 		disabled={!actionsEnabled}
 		onclick={() => {
 			if (confirm('Are you sure you want to delete all data?')) {
