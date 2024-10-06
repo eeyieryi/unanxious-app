@@ -17,11 +17,9 @@
 	let stepBy = $state(counter.step);
 </script>
 
-<li class="relative flex flex-col items-center rounded-md border py-4">
-	<div>
-		<span class="text-sm font-medium">{counter.name}</span>
-	</div>
-	<div class="mt-2 flex items-center">
+<li class="relative flex w-full flex-col items-center justify-start rounded-md border">
+	<span class="mb-4 mt-4 text-sm font-medium">{counter.name}</span>
+	<div class="mb-12 flex items-center">
 		<Button
 			onclick={() => dataService.decreaseCounter(counter, stepBy)}
 			variant="outline"
@@ -44,7 +42,9 @@
 	</div>
 
 	<div class="absolute bottom-1 right-1 flex items-center space-x-2">
-		<Label for="counter-{counter.id}-step-by">Step by</Label>
+		<Label
+			class="font-extralight capitalize"
+			for="counter-{counter.id}-step-by">step&nbsp;by</Label>
 		<Input
 			id="counter-{counter.id}-step-by"
 			class="h-8 w-16 text-center font-mono"
