@@ -138,23 +138,25 @@
 		{/if}
 	</nav>
 
-	<div class="flex h-full w-full flex-col border-r">
-		<div class="flex flex-col overflow-hidden p-4">
-			{#if selectedPage === 'tasks'}
-				<TasksApp />
-			{:else if selectedPage === 'focus'}
-				<FocusApp />
-			{:else if selectedPage === 'settings'}
-				<SettingsPage />
-			{:else if selectedPage === 'counter'}
-				<CounterApp />
-			{:else}
-				<h1>No App Selected</h1>
-			{/if}
+	{#if selectedPage === 'tasks'}
+		<TasksApp />
+	{:else}
+		<div class="flex h-full w-full flex-col border-r">
+			<div class="flex flex-col overflow-hidden p-4">
+				{#if selectedPage === 'focus'}
+					<FocusApp />
+				{:else if selectedPage === 'settings'}
+					<SettingsPage />
+				{:else if selectedPage === 'counter'}
+					<CounterApp />
+				{:else}
+					<h1>No App Selected</h1>
+				{/if}
+			</div>
+			<div class="mt-auto">
+				<Separator />
+				<div class="h-10 w-full"></div>
+			</div>
 		</div>
-		<div class="mt-auto">
-			<Separator />
-			<div class="h-10 w-full"></div>
-		</div>
-	</div>
+	{/if}
 </div>
