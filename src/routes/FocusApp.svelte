@@ -8,6 +8,7 @@
 	import { Button, buttonVariants } from '$lib/components/ui/button';
 
 	import TimerDigits from '$lib/components/TimerDigits.svelte';
+	import CustomScrollArea from '$lib/components/CustomScrollArea.svelte';
 
 	import { dhms, padWithZero } from '$lib/datetime';
 	import { getAppDataService } from '$lib/data-service.svelte';
@@ -48,7 +49,7 @@
 	<title>Unanxious :: Focus</title>
 </svelte:head>
 
-<div class="flex h-screen w-full min-w-[460px] max-w-[460px] flex-col space-y-8 border-r px-2 py-2">
+<div class="mb-10 flex max-w-full flex-col space-y-6">
 	<div class="flex items-center justify-between">
 		{#if dataService.state.selectedTimer}
 			{#if selectedTimerTask}
@@ -63,7 +64,7 @@
 								variant: 'outline'
 							})
 						)}>
-						Timer: {dataService.state.selectedTimer.name}
+						<span>Timer:&nbsp;{dataService.state.selectedTimer.name}</span>
 					</Dialog.Trigger>
 					<Dialog.Content>
 						<Dialog.Title>Attach to task</Dialog.Title>
@@ -154,6 +155,9 @@
 			bind:value={createTimerFormInputName}
 			placeholder="mindfulness" />
 	</form>
+</div>
+
+<CustomScrollArea>
 	{#if dataService.state.timers.length > 0}
 		<ul class="flex w-full flex-col items-center justify-center space-y-2">
 			{#each dataService.state.timers as timer (timer.id)}
@@ -170,4 +174,4 @@
 			{/each}
 		</ul>
 	{/if}
-</div>
+</CustomScrollArea>

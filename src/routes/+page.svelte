@@ -49,7 +49,7 @@
 	<title>Unanxious APP</title>
 </svelte:head>
 
-<div class="flex h-screen w-full flex-row">
+<div class="flex h-screen w-screen max-w-[500px] flex-row">
 	<nav class="flex w-full min-w-[40px] max-w-[40px] flex-col items-center border-r">
 		<Button
 			onclick={() => themeToggler.toggleTheme()}
@@ -138,15 +138,23 @@
 		{/if}
 	</nav>
 
-	{#if selectedPage === 'tasks'}
-		<TasksApp />
-	{:else if selectedPage === 'focus'}
-		<FocusApp />
-	{:else if selectedPage === 'settings'}
-		<SettingsPage />
-	{:else if selectedPage === 'counter'}
-		<CounterApp />
-	{:else}
-		<h1>No App Selected</h1>
-	{/if}
+	<div class="flex h-full w-full flex-col border-r">
+		<div class="flex flex-col overflow-hidden p-4">
+			{#if selectedPage === 'tasks'}
+				<TasksApp />
+			{:else if selectedPage === 'focus'}
+				<FocusApp />
+			{:else if selectedPage === 'settings'}
+				<SettingsPage />
+			{:else if selectedPage === 'counter'}
+				<CounterApp />
+			{:else}
+				<h1>No App Selected</h1>
+			{/if}
+		</div>
+		<div class="mt-auto">
+			<Separator />
+			<div class="h-10 w-full"></div>
+		</div>
+	</div>
 </div>
