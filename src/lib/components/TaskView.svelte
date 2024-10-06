@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ArrowLeft } from 'lucide-svelte';
+	import { ArrowLeft, Trash2 } from 'lucide-svelte';
 
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
@@ -74,4 +74,16 @@
 			});
 		}}
 		bind:value={taskDescription.value}></Textarea>
+
+	<Button
+		size="icon"
+		variant="destructive"
+		onclick={() => {
+			if (confirm('are you sure you want to delete this task?')) {
+				dataService.deleteTask(task);
+				dataService.state.selectedTaskID = null;
+			}
+		}}>
+		<Trash2 />
+	</Button>
 </div>

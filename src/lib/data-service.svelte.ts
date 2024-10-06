@@ -354,6 +354,10 @@ export class AppDataService {
 			this.timerIntervalsMap.delete(id);
 		}
 	}
+
+	deleteTask(t: Task) {
+		this.tasksMap.delete(t.id);
+	}
 }
 
 const APP_DATA_SERVICE_KEY = Symbol('APP_DATA_SERVICE');
