@@ -347,7 +347,9 @@ export class AppDataService {
 		this.timersMap.set(timer.id, { ...timer, task_id: task.id });
 	}
 
-	deleteTimer(t: Timer) {
+	deleteSelectedTimer() {
+		const t = this.state.selectedTimer;
+		if (!t) return;
 		const ti_ids = this.state.selectedTimerIntervals.map((ti) => ti.id);
 		this.timersMap.delete(t.id);
 		for (const id of ti_ids) {
@@ -355,7 +357,9 @@ export class AppDataService {
 		}
 	}
 
-	deleteTask(t: Task) {
+	deleteSelectedTask() {
+		const t = this.state.selectedTask;
+		if (!t) return;
 		this.tasksMap.delete(t.id);
 	}
 }

@@ -80,7 +80,9 @@
 		variant="destructive"
 		onclick={() => {
 			if (confirm('are you sure you want to delete this task?')) {
-				dataService.deleteTask(task);
+				if (!dataService.state.selectedTask) return;
+
+				dataService.deleteSelectedTask();
 				dataService.state.selectedTaskID = null;
 			}
 		}}>

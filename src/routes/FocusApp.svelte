@@ -80,7 +80,7 @@
 						onclick={() => {
 							if (confirm('are you sure you want to delete this timer?')) {
 								if (!dataService.state.selectedTimer) return;
-								dataService.deleteTimer(dataService.state.selectedTimer);
+								dataService.deleteSelectedTimer();
 							}
 						}}>
 						<Trash2 class="h-6 w-6" />
