@@ -115,7 +115,7 @@
 		</Button>
 	</div>
 	<div class="flex justify-around text-center">
-		<div>
+		<div class="flex w-20 flex-col items-center">
 			<span class="text-muted-foreground">Today</span>
 			<div class="flex items-center font-mono">
 				{#if selectedTimerStatsToday.hours > 0}
@@ -127,7 +127,7 @@
 				<span>{padWithZero(selectedTimerStatsToday.seconds)}</span>
 			</div>
 		</div>
-		<div>
+		<div class="flex w-20 flex-col items-center">
 			<span class="text-muted-foreground">Total</span>
 			<div class="flex items-center font-mono">
 				{#if selectedTimerStatsTotal.hours > 0}
