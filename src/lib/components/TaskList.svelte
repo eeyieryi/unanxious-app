@@ -1,6 +1,6 @@
 <script lang="ts">
 	import clsx from 'clsx';
-	import { Plus } from 'lucide-svelte';
+	import { Plus, Trash2 } from 'lucide-svelte';
 
 	import { Label } from '$lib/components/ui/label';
 	import { Input } from '$lib/components/ui/input';
@@ -32,7 +32,7 @@
 </script>
 
 <div class="min-w-[500px] max-w-[500px] space-y-4 border-r px-4 pt-4">
-	<header>
+	<header class="flex h-8 items-center justify-between">
 		<h4 class="capitalize"
 			>list:&nbsp;<span class="font-medium">
 				{#if dataService.state.selectedList}
@@ -43,6 +43,22 @@
 					{dataService.state.selectedListID}
 				{/if}
 			</span></h4>
+
+		{#if !['all', 'inbox'].includes(dataService.state.selectedListID)}
+			<Button
+				class="h-8 w-8"
+				size="icon"
+				variant="destructive"
+				onclick={() => {
+					if (confirm('are you sure you want to delete this list and all its tasks?')) {
+						if (!dataService.state.selectedList) return;
+						dataService.deleteSelectedList();
+						dataService.state.selectedListID = 'inbox';
+					}
+				}}>
+				<Trash2 class="h-4 w-4" />
+			</Button>
+		{/if}
 	</header>
 	<form
 		bind:this={createTaskForm}

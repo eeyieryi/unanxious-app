@@ -362,6 +362,16 @@ export class AppDataService {
 		if (!t) return;
 		this.tasksMap.delete(t.id);
 	}
+
+	deleteSelectedList() {
+		const l = this.state.selectedList;
+		if (!l) return;
+		const task_ids = this.state.selectedListTasks.map((t) => t.id);
+		this.listsMap.delete(l.id);
+		for (const id of task_ids) {
+			this.tasksMap.delete(id);
+		}
+	}
 }
 
 const APP_DATA_SERVICE_KEY = Symbol('APP_DATA_SERVICE');
