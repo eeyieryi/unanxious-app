@@ -44,7 +44,7 @@
 	});
 </script>
 
-<div class="relative overflow-scroll">
+<div class="relative overflow-hidden">
 	{#if showTopArrow}
 		<div
 			class="absolute left-1/2 top-1.5 z-10 -translate-x-1/2 transform rounded-full bg-background/80 p-1 shadow-md">
