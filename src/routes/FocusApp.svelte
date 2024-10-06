@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Pause, Play, X } from 'lucide-svelte';
+	import { Pause, Play, Trash2, X } from 'lucide-svelte';
 
 	import { cn } from '$lib/utils';
 	import { Input } from '$lib/components/ui/input';
@@ -52,22 +52,41 @@
 <div class="mb-10 flex max-w-full flex-col space-y-6">
 	<div class="flex items-center justify-between">
 		{#if dataService.state.selectedTimer}
-			{#if selectedTimerTask}
-				<Button variant="outline">
-					Task: {selectedTimerTask.name}
-				</Button>
-			{:else}
-				<Dialog.Root>
-					<Dialog.Trigger
-						class={cn(
-							buttonVariants({
-								variant: 'outline'
-							})
-						)}>
+			<Dialog.Root>
+				<Dialog.Trigger
+					class={cn(
+						buttonVariants({
+							variant: 'outline'
+						})
+					)}>
+					{#if selectedTimerTask}
+						<span>Task:&nbsp;{selectedTimerTask.name}</span>
+					{:else}
 						<span>Timer:&nbsp;{dataService.state.selectedTimer.name}</span>
-					</Dialog.Trigger>
-					<Dialog.Content>
-						<Dialog.Title>Attach to task</Dialog.Title>
+					{/if}
+				</Dialog.Trigger>
+				<Dialog.Content>
+					<Dialog.Title>
+						{#if selectedTimerTask}
+							<span class="capitalize">timer:</span>&nbsp;<span
+								>{dataService.state.selectedTimer.name}</span>
+						{:else}
+							<span class="capitalize">attach&nbsp;to&nbsp;task</span>
+						{/if}
+					</Dialog.Title>
+
+					<Dialog.Close
+						class={cn(buttonVariants({ variant: 'destructive', size: 'icon' }))}
+						onclick={() => {
+							if (confirm('are you sure you want to delete this timer?')) {
+								if (!dataService.state.selectedTimer) return;
+								dataService.deleteTimer(dataService.state.selectedTimer);
+							}
+						}}>
+						<Trash2 class="h-6 w-6" />
+					</Dialog.Close>
+
+					{#if !selectedTimerTask}
 						<div>
 							<ul>
 								{#each availableToAttachTasks as task (task.id)}
@@ -78,12 +97,12 @@
 								{/each}
 							</ul>
 						</div>
-						<Dialog.Footer>
-							<Dialog.Close>Cancel</Dialog.Close>
-						</Dialog.Footer>
-					</Dialog.Content>
-				</Dialog.Root>
-			{/if}
+					{/if}
+					<Dialog.Footer>
+						<Dialog.Close><span class="capitalize">cancel</span></Dialog.Close>
+					</Dialog.Footer>
+				</Dialog.Content>
+			</Dialog.Root>
 		{:else}
 			<Button variant="outline">
 				<span class="font-lg font-mono uppercase">focus</span>

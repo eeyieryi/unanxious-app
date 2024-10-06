@@ -346,6 +346,14 @@ export class AppDataService {
 		if (!timer) return;
 		this.timersMap.set(timer.id, { ...timer, task_id: task.id });
 	}
+
+	deleteTimer(t: Timer) {
+		const ti_ids = this.state.selectedTimerIntervals.map((ti) => ti.id);
+		this.timersMap.delete(t.id);
+		for (const id of ti_ids) {
+			this.timerIntervalsMap.delete(id);
+		}
+	}
 }
 
 const APP_DATA_SERVICE_KEY = Symbol('APP_DATA_SERVICE');
