@@ -5,7 +5,6 @@ import { applyUpdate, Doc } from 'yjs';
 import { IndexeddbPersistence } from 'y-indexeddb';
 import { fromDate, getLocalTimeZone, isToday } from '@internationalized/date';
 
-import { SyncService } from '$lib/sync.svelte';
 import { TasksService } from '$lib/tasks-service.svelte';
 import { BackupService } from '$lib/backup-service.svelte';
 import { getUnixEpochFromNow, getDateTimeFromUnixEpoch } from '$lib/datetime';
@@ -82,7 +81,6 @@ class AppState {
 export class AppDataService {
 	readonly doc: Doc;
 	readonly state: AppState;
-	readonly syncService: SyncService;
 	readonly backupService: BackupService;
 
 	readonly listsMap;
@@ -99,10 +97,6 @@ export class AppDataService {
 	constructor() {
 		this.doc = new Doc();
 		this.state = new AppState();
-		this.syncService = new SyncService(
-			this.doc,
-			'demo-demo-demo' // Change this
-		);
 		this.backupService = new BackupService();
 
 		this.listsMap = this.doc.getMap<List>('lists');
