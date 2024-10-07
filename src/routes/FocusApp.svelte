@@ -25,7 +25,7 @@
 	let selectedTimerTask = $derived.by(() => {
 		if (dataService.state.selectedTimer && dataService.state.selectedTimer.task_id) {
 			const taskID = dataService.state.selectedTimer.task_id;
-			const found = dataService.state.tasks.find((t) => t.id === taskID);
+			const found = dataService.tasksService.state.tasks.get(taskID);
 			if (found) return found;
 		}
 		return null;
@@ -35,7 +35,9 @@
 		dataService.state.timers.map((timer) => timer.task_id).filter((id) => id !== null)
 	);
 	const availableToAttachTasks = $derived(
-		dataService.state.tasks.filter((t) => !timerTaskIDs.includes(t.id))
+		Array.from(dataService.tasksService.state.tasks.values()).filter(
+			(t) => !timerTaskIDs.includes(t.id)
+		)
 	);
 
 	let selectedTimerStatsToday = $derived(dhms(dataService.state.selectedTimerStats.today));

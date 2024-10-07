@@ -11,21 +11,21 @@
 
 	import { getAppDataService } from '$lib/data-service.svelte';
 
-	const dataService = getAppDataService();
+	const { tasksService } = getAppDataService();
 
 	let createTaskForm = $state<HTMLFormElement>();
 	let createTaskFormInputName = $state('');
 
 	function handleSubmitCreateTask(e: SubmitEvent) {
 		e.preventDefault();
-		const list_id =
-			dataService.state.selectedListID === 'all' ? 'inbox' : dataService.state.selectedListID;
-		const tu = dataService.createTask(createTaskFormInputName, list_id);
+		const listID =
+			tasksService.state.selectedListID === 'all' ? 'inbox' : tasksService.state.selectedListID;
+		const tu = tasksService.createTask({ name: createTaskFormInputName, listID: listID });
 		if (tu) {
-			if (dataService.state.selectedListID !== tu.list_id) {
-				dataService.state.selectedListID = tu.list_id;
+			if (tasksService.state.selectedListID !== tu.list_id) {
+				tasksService.state.selectedListID = tu.list_id;
 			}
-			dataService.state.selectedTaskID = tu.id;
+			tasksService.state.selectedTaskID = tu.id;
 			createTaskForm?.reset();
 		}
 	}
@@ -35,25 +35,25 @@
 	<header class="flex h-8 items-center justify-between">
 		<h4 class="capitalize"
 			>list:&nbsp;<span class="font-medium">
-				{#if dataService.state.selectedList}
-					{dataService.state.selectedList.name.length > 0
-						? dataService.state.selectedList.name
+				{#if tasksService.state.selectedList}
+					{tasksService.state.selectedList.name.length > 0
+						? tasksService.state.selectedList.name
 						: 'No Title'}
 				{:else}
-					{dataService.state.selectedListID}
+					{tasksService.state.selectedListID}
 				{/if}
 			</span></h4>
 
-		{#if !['all', 'inbox'].includes(dataService.state.selectedListID)}
+		{#if !['all', 'inbox'].includes(tasksService.state.selectedListID)}
 			<Button
 				class="h-8 w-8"
 				size="icon"
 				variant="destructive"
 				onclick={() => {
 					if (confirm('are you sure you want to delete this list and all its tasks?')) {
-						if (!dataService.state.selectedList) return;
-						dataService.deleteSelectedList();
-						dataService.state.selectedListID = 'inbox';
+						if (!tasksService.state.selectedList) return;
+						tasksService.deleteList({ listID: tasksService.state.selectedListID });
+						tasksService.state.selectedListID = 'inbox';
 					}
 				}}>
 				<Trash2 class="h-4 w-4" />
@@ -82,9 +82,9 @@
 			</Button>
 		</div>
 	</form>
-	{#if dataService.state.selectedListTasks.length > 0}
+	{#if tasksService.state.selectedListTasks.length > 0}
 		<ul class="flex flex-col items-center justify-center space-y-2">
-			{#each dataService.state.selectedListTasks as task (task.id)}
+			{#each tasksService.state.selectedListTasks as task (task.id)}
 				<li class="flex w-full items-center space-x-2">
 					<TaskCheckbox task={task} />
 					<Button
@@ -94,7 +94,7 @@
 						variant="outline"
 						size="icon"
 						onclick={() => {
-							dataService.state.selectedTaskID = task.id;
+							tasksService.state.selectedTaskID = task.id;
 						}}>
 						<span>{task.name.length > 0 ? task.name : 'No title'}</span>
 					</Button>
@@ -108,7 +108,7 @@
 	{/if}
 </div>
 
-{#if dataService.state.selectedTask}
+{#if tasksService.state.selectedTask}
 	<div class="flex flex-col p-4">
 		<TaskView />
 	</div>

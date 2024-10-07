@@ -6,69 +6,27 @@ import { IndexeddbPersistence } from 'y-indexeddb';
 import { fromDate, getLocalTimeZone, isToday } from '@internationalized/date';
 
 import { SyncService } from '$lib/sync.svelte';
+import { TasksService } from '$lib/tasks-service.svelte';
 import { BackupService } from '$lib/backup-service.svelte';
 import { getUnixEpochFromNow, getDateTimeFromUnixEpoch } from '$lib/datetime';
 
 class AppState {
-	tasks = $state<Task[]>([]);
-	lists = $state<List[]>([]);
 	timers = $state<Timer[]>([]);
 	timerIntervals = $state<TimerInterval[]>([]);
-	selectedListID = $state<string>('inbox');
-	selectedTaskID = $state<string | null>(null);
 	selectedTimerID = $state<string | null>(null);
 	counters = $state<Counter[]>([]);
 	countersRecords = $state(new SvelteMap<string, CounterRecord[]>());
 	countersStats = $state(new SvelteMap<string, CounterStats>());
 
 	reset() {
-		this.tasks = [];
-		this.lists = [];
 		this.timers = [];
 		this.timerIntervals = [];
-		this.selectedListID = 'inbox';
-		this.selectedTaskID = null;
 		this.selectedTimerID = null;
+
 		this.counters = [];
 		this.countersRecords.clear();
 		this.countersStats.clear();
 	}
-
-	readonly selectedList = $derived.by(() => {
-		const listID = this.selectedListID;
-		if (listID) {
-			const found = this.lists.find((list) => listID === list.id);
-			if (found) return found;
-		}
-		return null;
-	});
-
-	readonly selectedListTasks = $derived(
-		this.tasks.filter((task) => {
-			if (this.selectedListID === 'all') {
-				return true;
-			}
-			return task.list_id === this.selectedListID;
-		})
-	);
-
-	readonly selectedTask = $derived.by(() => {
-		const selectedTaskID = this.selectedTaskID;
-		if (selectedTaskID) {
-			const found = this.tasks.find((task) => selectedTaskID === task.id);
-			if (found) return found;
-		}
-		return null;
-	});
-
-	readonly selectedTaskList = $derived.by(() => {
-		const selectedTask = this.selectedTask;
-		if (selectedTask) {
-			const found = this.lists.find((list) => selectedTask.list_id === list.id);
-			if (found) return found;
-		}
-		return null;
-	});
 
 	readonly selectedTimer = $derived.by(() => {
 		const selectedTimerID = this.selectedTimerID;
@@ -119,15 +77,6 @@ class AppState {
 		}
 		return timerStats;
 	});
-
-	updateTask(t: Task) {
-		this.tasks = this.tasks.map((task) => {
-			if (t.id === task.id) {
-				return t;
-			}
-			return task;
-		});
-	}
 }
 
 export class AppDataService {
@@ -138,6 +87,8 @@ export class AppDataService {
 
 	readonly listsMap;
 	readonly tasksMap;
+	readonly tasksService: TasksService;
+
 	readonly timersMap;
 	readonly timerIntervalsMap;
 	readonly countersMap;
@@ -156,6 +107,8 @@ export class AppDataService {
 
 		this.listsMap = this.doc.getMap<List>('lists');
 		this.tasksMap = this.doc.getMap<Task>('tasks');
+		this.tasksService = new TasksService(this.listsMap, this.tasksMap);
+
 		this.timersMap = this.doc.getMap<Timer>('timers');
 		this.timerIntervalsMap = this.doc.getMap<TimerInterval>('timer_intervals');
 		this.countersMap = this.doc.getMap<Counter>('counters');
@@ -163,18 +116,6 @@ export class AppDataService {
 
 		this.doc.on('update', (update) => {
 			applyUpdate(this.doc, update);
-		});
-
-		this.listsMap.observe((event) => {
-			if (event.keysChanged.size !== 0) {
-				this.state.lists = Array.from(this.listsMap.values());
-			}
-		});
-
-		this.tasksMap.observe((event) => {
-			if (event.keysChanged.size !== 0) {
-				this.state.tasks = Array.from(this.tasksMap.values());
-			}
 		});
 
 		this.timersMap.observe((event) => {
@@ -243,30 +184,6 @@ export class AppDataService {
 		};
 	}
 
-	createList(name: string, id?: string): List {
-		const list: List = {
-			id: id ?? crypto.randomUUID(),
-			name: name,
-			created_at: getUnixEpochFromNow(),
-			updated_at: getUnixEpochFromNow()
-		};
-		return this.listsMap.set(list.id, list);
-	}
-
-	createTask(name: string, listID: string): Task {
-		const task: Task = {
-			id: crypto.randomUUID(),
-			name: name,
-			created_at: getUnixEpochFromNow(),
-			updated_at: getUnixEpochFromNow(),
-			list_id: listID,
-			completed: false,
-			description: '',
-			due_at: null
-		};
-		return this.tasksMap.set(task.id, task);
-	}
-
 	createTimer(name: string): Timer {
 		const timer: Timer = {
 			id: crypto.randomUUID(),
@@ -315,10 +232,6 @@ export class AppDataService {
 		this.counterRecordsMap.delete(counter.id);
 	}
 
-	updateTask(t: Task): void {
-		this.tasksMap.set(t.id, t);
-	}
-
 	toggleTimer(): void {
 		const timerID = this.state.selectedTimerID ? this.state.selectedTimerID : 'focus';
 		const lastTimerInterval = this.state.selectedTimerLastInterval;
@@ -354,22 +267,6 @@ export class AppDataService {
 		this.timersMap.delete(t.id);
 		for (const id of ti_ids) {
 			this.timerIntervalsMap.delete(id);
-		}
-	}
-
-	deleteSelectedTask() {
-		const t = this.state.selectedTask;
-		if (!t) return;
-		this.tasksMap.delete(t.id);
-	}
-
-	deleteSelectedList() {
-		const l = this.state.selectedList;
-		if (!l) return;
-		const task_ids = this.state.selectedListTasks.map((t) => t.id);
-		this.listsMap.delete(l.id);
-		for (const id of task_ids) {
-			this.tasksMap.delete(id);
 		}
 	}
 

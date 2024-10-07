@@ -3,7 +3,7 @@
 
 	import { getAppDataService, type Task } from '$lib/data-service.svelte';
 
-	const dataService = getAppDataService();
+	const { tasksService } = getAppDataService();
 
 	type Props = {
 		task: Task;
@@ -12,5 +12,5 @@
 </script>
 
 <Checkbox
-	onCheckedChange={() => dataService.updateTask({ ...task, completed: !task.completed })}
+	onCheckedChange={() => tasksService.updateTask({ task: { ...task, completed: !task.completed } })}
 	checked={task.completed} />

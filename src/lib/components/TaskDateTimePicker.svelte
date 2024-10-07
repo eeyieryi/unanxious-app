@@ -16,12 +16,14 @@
 	import { formatDueAt, millisecondsToSeconds, secondsToMilliseconds } from '$lib/datetime';
 	import { getAppDataService, type Task } from '$lib/data-service.svelte';
 
-	const dataService = getAppDataService();
+	const { tasksService } = getAppDataService();
 
 	function updateTaskDueAt(dueAt: DateValue | null) {
-		dataService.updateTask({
-			...task,
-			due_at: dueAt === null ? null : millisecondsToSeconds(dueAt.toDate('UTC').valueOf())
+		tasksService.updateTask({
+			task: {
+				...task,
+				due_at: dueAt === null ? null : millisecondsToSeconds(dueAt.toDate('UTC').valueOf())
+			}
 		});
 	}
 

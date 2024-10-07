@@ -5,7 +5,7 @@
 
 	import { getAppDataService, type List, type Task } from '$lib/data-service.svelte';
 
-	const dataService = getAppDataService();
+	const { tasksService } = getAppDataService();
 
 	type Props = {
 		task: Task;
@@ -13,13 +13,15 @@
 	};
 	let { task, availableLists }: Props = $props();
 
-	async function moveToList(listID: string) {
+	function moveToList(listID: string) {
 		if (task.list_id === listID) {
 			return;
 		}
-		dataService.updateTask({
-			...task,
-			list_id: listID
+		tasksService.updateTask({
+			task: {
+				...task,
+				list_id: listID
+			}
 		});
 	}
 </script>

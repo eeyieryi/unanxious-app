@@ -9,7 +9,7 @@
 
 	import { getAppDataService } from '$lib/data-service.svelte';
 
-	const dataService = getAppDataService();
+	const { tasksService } = getAppDataService();
 
 	type ListItem = {
 		id: string;
@@ -31,9 +31,9 @@
 	let createListFormInputName = $state('');
 	function handleSubmitCreateList(event: SubmitEvent) {
 		event.preventDefault();
-		const list = dataService.createList(createListFormInputName);
+		const list = tasksService.createList({ name: createListFormInputName });
 		createListForm?.reset();
-		dataService.state.selectedListID = list.id;
+		tasksService.state.selectedListID = list.id;
 	}
 </script>
 
@@ -53,18 +53,18 @@
 		<Button
 			variant="outline"
 			onclick={() => {
-				dataService.state.selectedListID = id;
+				tasksService.state.selectedListID = id;
 			}}
 			class="capitalize">
 			<span>{title}</span>
 		</Button>
 	{/snippet}
 
-	{#each fixedLists as fixedList}
+	{#each fixedLists as fixedList (fixedList.id)}
 		{@render item(fixedList)}
 	{/each}
 
-	{#each dataService.state.lists as { name, id } (id)}
+	{#each Array.from(tasksService.state.lists.values()) as { name, id } (id)}
 		{@render item({ name, id })}
 	{/each}
 
@@ -85,7 +85,7 @@
 	</form>
 </nav>
 
-{#if dataService.state.selectedListID}
+{#if tasksService.state.selectedListID}
 	<TaskList />
 {:else}
 	<p>Select a list to see its tasks</p>

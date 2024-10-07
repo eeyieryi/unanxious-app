@@ -11,9 +11,9 @@
 
 	import { getAppDataService } from '$lib/data-service.svelte';
 
-	const dataService = getAppDataService();
+	const { tasksService } = getAppDataService();
 
-	let task = $derived({ ...dataService.state.selectedTask! });
+	let task = $derived({ ...tasksService.state.selectedTask! });
 
 	let taskName = {
 		get value() {
@@ -31,6 +31,7 @@
 			task.description = v;
 		}
 	};
+	let availableLists = $derived(Array.from(tasksService.state.lists.values()));
 </script>
 
 <div class="flex items-center space-x-2">
@@ -38,12 +39,12 @@
 		variant="link"
 		size="icon"
 		onclick={() => {
-			dataService.state.selectedTaskID = null;
+			tasksService.state.selectedTaskID = null;
 		}}>
 		<ArrowLeft />
 	</Button>
 	<TaskMoveToList
-		availableLists={dataService.state.lists}
+		availableLists={availableLists}
 		task={task} />
 </div>
 
@@ -55,22 +56,26 @@
 <div class="mt-4 flex flex-col space-y-4">
 	<Input
 		onchange={() => {
-			dataService.updateTask({
-				...task,
-				name: taskName.value
+			tasksService.updateTask({
+				task: {
+					...task,
+					name: taskName.value
+				}
 			});
 		}}
 		onkeyup={() => {
-			dataService.state.updateTask({ ...task, name: taskName.value }); // this only updates the store, it does not persist
+			tasksService.state.tasks.set(task.id, { ...task, name: taskName.value });
 		}}
 		type="text"
 		placeholder="No title"
 		bind:value={taskName.value} />
 	<Textarea
 		onchange={() => {
-			dataService.updateTask({
-				...task,
-				description: taskDescription.value
+			tasksService.updateTask({
+				task: {
+					...task,
+					description: taskDescription.value
+				}
 			});
 		}}
 		bind:value={taskDescription.value}></Textarea>
@@ -80,10 +85,9 @@
 		variant="destructive"
 		onclick={() => {
 			if (confirm('are you sure you want to delete this task?')) {
-				if (!dataService.state.selectedTask) return;
-
-				dataService.deleteSelectedTask();
-				dataService.state.selectedTaskID = null;
+				if (!tasksService.state.selectedTask) return;
+				tasksService.deleteTask({ taskID: task.id });
+				tasksService.state.selectedTaskID = null;
 			}
 		}}>
 		<Trash2 />
