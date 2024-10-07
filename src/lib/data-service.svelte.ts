@@ -372,6 +372,13 @@ export class AppDataService {
 			this.tasksMap.delete(id);
 		}
 	}
+
+	archiveSelectedTimer() {
+		const t = this.state.selectedTimer;
+		if (!t) return;
+		this.timersMap.set(t.id, { ...t, archived: true });
+		this.state.selectedTimerID = null;
+	}
 }
 
 const APP_DATA_SERVICE_KEY = Symbol('APP_DATA_SERVICE');
@@ -406,6 +413,18 @@ export interface Timer {
 	task_id: string | null;
 	created_at: number;
 	updated_at: number;
+	archived?: boolean;
+}
+
+export function isTimerArchived(timer: Timer) {
+	if (timer.archived !== undefined) {
+		return timer.archived;
+	}
+	return false;
+}
+
+export function isTimerNotArchived(timer: Timer) {
+	return !isTimerArchived(timer);
 }
 
 export interface TimerInterval {

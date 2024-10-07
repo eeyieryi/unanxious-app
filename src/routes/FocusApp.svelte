@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Pause, Play, Trash2, X } from 'lucide-svelte';
+	import { Archive, Pause, Play, Trash2, X } from 'lucide-svelte';
 
 	import { cn } from '$lib/utils';
 	import { Input } from '$lib/components/ui/input';
@@ -8,7 +8,7 @@
 	import { Button, buttonVariants } from '$lib/components/ui/button';
 
 	import TimerDigits from '$lib/components/TimerDigits.svelte';
-	import CustomScrollArea from '$lib/components/CustomScrollArea.svelte';
+	import TimerList from '$lib/components/pages/focus/TimerList.svelte';
 
 	import { dhms, padWithZero } from '$lib/datetime';
 	import { getAppDataService } from '$lib/data-service.svelte';
@@ -75,16 +75,31 @@
 						{/if}
 					</Dialog.Title>
 
-					<Dialog.Close
-						class={cn(buttonVariants({ variant: 'destructive', size: 'icon' }))}
-						onclick={() => {
-							if (confirm('are you sure you want to delete this timer?')) {
-								if (!dataService.state.selectedTimer) return;
-								dataService.deleteSelectedTimer();
-							}
-						}}>
-						<Trash2 class="h-6 w-6" />
-					</Dialog.Close>
+					<div class="flex items-center space-x-2">
+						<Dialog.Close
+							class={cn(buttonVariants({ variant: 'secondary' }), 'space-x-2')}
+							onclick={() => {
+								if (confirm('are you sure you want to archive this timer?')) {
+									if (!dataService.state.selectedTimer) return;
+									dataService.archiveSelectedTimer();
+								}
+							}}>
+							<Archive class="h-4 w-4" />
+							<span class="capitalize">archive</span>
+						</Dialog.Close>
+
+						<Dialog.Close
+							class={cn(buttonVariants({ variant: 'destructive' }), 'space-x-2')}
+							onclick={() => {
+								if (confirm('are you sure you want to delete this timer?')) {
+									if (!dataService.state.selectedTimer) return;
+									dataService.deleteSelectedTimer();
+								}
+							}}>
+							<Trash2 class="h-4 w-4" />
+							<span class="capitalize">delete</span>
+						</Dialog.Close>
+					</div>
 
 					{#if !selectedTimerTask}
 						<div>
@@ -99,7 +114,9 @@
 						</div>
 					{/if}
 					<Dialog.Footer>
-						<Dialog.Close><span class="capitalize">cancel</span></Dialog.Close>
+						<Dialog.Close class={cn(buttonVariants({ variant: 'secondary' }))}>
+							<span class="capitalize">cancel</span>
+						</Dialog.Close>
 					</Dialog.Footer>
 				</Dialog.Content>
 			</Dialog.Root>
@@ -108,14 +125,25 @@
 				<span class="font-lg font-mono uppercase">focus</span>
 			</Button>
 		{/if}
-		{#if dataService.state.selectedTimer}
+
+		<div class="flex items-center space-x-2">
 			<Button
-				variant="outline"
-				size="icon"
-				onclick={() => (dataService.state.selectedTimerID = null)}>
-				<X />
+				class="space-x-2"
+				variant="secondary"
+				onclick={() => {}}>
+				<Archive class="h-4 w-4" />
+				<span class="capitalize">show&nbsp;archived</span>
 			</Button>
-		{/if}
+
+			{#if dataService.state.selectedTimer}
+				<Button
+					variant="outline"
+					size="icon"
+					onclick={() => (dataService.state.selectedTimerID = null)}>
+					<X />
+				</Button>
+			{/if}
+		</div>
 	</div>
 	<div class="flex flex-col items-center justify-center space-y-4">
 		<TimerDigits
@@ -176,21 +204,4 @@
 	</form>
 </div>
 
-<CustomScrollArea>
-	{#if dataService.state.timers.length > 0}
-		<ul class="flex w-full flex-col items-center justify-center space-y-2">
-			{#each dataService.state.timers as timer (timer.id)}
-				<li class="w-full">
-					<Button
-						onclick={() => {
-							dataService.state.selectedTimerID = timer.id;
-						}}
-						variant="outline"
-						class="w-full">
-						{timer.name}
-					</Button>
-				</li>
-			{/each}
-		</ul>
-	{/if}
-</CustomScrollArea>
+<TimerList />
