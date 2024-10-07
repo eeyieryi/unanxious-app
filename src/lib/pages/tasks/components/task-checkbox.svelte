@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { Checkbox } from '$lib/components/ui/checkbox';
 
-	import { getAppDataService, type Task } from '$lib/data-service.svelte';
+	import type { Task } from '$lib/app-state';
+	import { getAppDataService } from '$lib/app-state/data-service.svelte';
 
 	const { tasksService } = getAppDataService();
 

@@ -4,11 +4,11 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Button } from '$lib/components/ui/button';
+	import { CustomScrollArea } from '$lib/components/ui/custom-scroll-area';
 
-	import CounterItem from '$lib/components/CounterItem.svelte';
+	import { CounterItem } from './components';
 
-	import { getAppDataService } from '$lib/data-service.svelte';
-	import CustomScrollArea from '$lib/components/CustomScrollArea.svelte';
+	import { getAppDataService } from '$lib/app-state';
 
 	const dataService = getAppDataService();
 

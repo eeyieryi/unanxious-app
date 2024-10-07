@@ -8,13 +8,10 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
 
-	import TasksApp from './TasksApp.svelte';
-	import FocusApp from './FocusApp.svelte';
-	import CounterApp from './CounterApp.svelte';
-	import SettingsPage from './SettingsPage.svelte';
-
 	import { ThemeToggler } from '$lib/toggle-theme/theme-toggler.svelte';
-	import { setAppDataService } from '$lib/data-service.svelte';
+
+	import { setAppDataService } from '$lib/app-state';
+	import { TasksApp, FocusApp, CounterApp, SettingsPage } from '$lib/pages';
 
 	const themeToggler = new ThemeToggler();
 

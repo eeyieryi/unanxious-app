@@ -3,7 +3,8 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { buttonVariants } from '$lib/components/ui/button';
 
-	import { getAppDataService, type List, type Task } from '$lib/data-service.svelte';
+	import type { List, Task } from '$lib/app-state';
+	import { getAppDataService } from '$lib/app-state/data-service.svelte';
 
 	const { tasksService } = getAppDataService();
 

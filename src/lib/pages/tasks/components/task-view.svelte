@@ -5,11 +5,9 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Textarea } from '$lib/components/ui/textarea';
 
-	import TaskCheckbox from '$lib/components/TaskCheckbox.svelte';
-	import TaskMoveToList from '$lib/components/TaskMoveToList.svelte';
-	import TaskDateTimePicker from '$lib/components/TaskDateTimePicker.svelte';
+	import { TaskCheckbox, TaskMoveToList, TaskDateTimePicker } from '.';
 
-	import { getAppDataService } from '$lib/data-service.svelte';
+	import { getAppDataService } from '$lib/app-state/data-service.svelte';
 
 	const { tasksService } = getAppDataService();
 

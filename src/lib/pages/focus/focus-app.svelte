@@ -7,11 +7,10 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Button, buttonVariants } from '$lib/components/ui/button';
 
-	import TimerDigits from '$lib/components/TimerDigits.svelte';
-	import TimerList from '$lib/components/pages/focus/TimerList.svelte';
-
 	import { dhms, padWithZero } from '$lib/datetime';
-	import { getAppDataService } from '$lib/data-service.svelte';
+	import { getAppDataService } from '$lib/app-state/data-service.svelte';
+
+	import { TimerDigits, TimerList } from './components';
 
 	const dataService = getAppDataService();
 

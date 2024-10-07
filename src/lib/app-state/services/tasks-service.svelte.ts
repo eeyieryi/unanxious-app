@@ -3,7 +3,8 @@ import { SvelteMap } from 'svelte/reactivity';
 import { Map as YMap } from 'yjs';
 
 import { getUnixEpochFromNow } from '$lib/datetime';
-import type { List, Task } from '$lib/data-service.svelte';
+
+import type { List, Task } from '../models';
 
 class TasksState {
 	tasks = $state(new SvelteMap<string, Task>());

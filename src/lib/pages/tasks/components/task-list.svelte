@@ -6,10 +6,9 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
 
-	import TaskView from '$lib/components/TaskView.svelte';
-	import TaskCheckbox from '$lib/components/TaskCheckbox.svelte';
+	import { TaskCheckbox, TaskView } from '.';
 
-	import { getAppDataService } from '$lib/data-service.svelte';
+	import { getAppDataService } from '$lib/app-state/data-service.svelte';
 
 	const { tasksService } = getAppDataService();
 

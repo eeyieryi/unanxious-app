@@ -13,8 +13,9 @@
 	import { Calendar } from '$lib/components/ui/calendar';
 	import { buttonVariants } from '$lib/components/ui/button';
 
+	import type { Task } from '$lib/app-state';
+	import { getAppDataService } from '$lib/app-state/data-service.svelte';
 	import { formatDueAt, millisecondsToSeconds, secondsToMilliseconds } from '$lib/datetime';
-	import { getAppDataService, type Task } from '$lib/data-service.svelte';
 
 	const { tasksService } = getAppDataService();
 

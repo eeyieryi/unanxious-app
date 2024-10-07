@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
+	import { CustomScrollArea } from '$lib/components/ui/custom-scroll-area';
 
-	import CustomScrollArea from '$lib/components/CustomScrollArea.svelte';
-
-	import { getAppDataService, isTimerNotArchived } from '$lib/data-service.svelte';
+	import { isTimerNotArchived } from '$lib/app-state/data-service.svelte';
+	import { getAppDataService } from '$lib/app-state/data-service.svelte';
 
 	const dataService = getAppDataService();
 

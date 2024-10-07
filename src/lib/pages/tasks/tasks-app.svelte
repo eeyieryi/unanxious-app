@@ -5,9 +5,9 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
 
-	import TaskList from '$lib/components/TaskList.svelte';
+	import { TaskList } from './components';
 
-	import { getAppDataService } from '$lib/data-service.svelte';
+	import { getAppDataService } from '$lib/app-state/data-service.svelte';
 
 	const { tasksService } = getAppDataService();
 

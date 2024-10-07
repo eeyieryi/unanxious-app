@@ -1,27 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Map as YMap } from 'yjs';
 import { saveAs } from 'file-saver';
 
-import * as Y from 'yjs';
+import { getUnixEpochFromNow } from '$lib/datetime';
 
 import type {
-	AppDataService,
-	Counter,
-	CounterRecord,
 	List,
 	Task,
 	Timer,
-	TimerInterval
-} from '$lib/data-service.svelte';
-import { getUnixEpochFromNow } from '$lib/datetime';
-
-interface AppData {
-	listsMap: Y.Map<List>;
-	tasksMap: Y.Map<Task>;
-	timersMap: Y.Map<Timer>;
-	timerIntervalsMap: Y.Map<TimerInterval>;
-	countersMap: Y.Map<Counter>;
-	counterRecordsMap: Y.Map<CounterRecord[]>;
-}
+	TimerInterval,
+	Counter,
+	CounterRecord,
+	SharedTypes
+} from '../models';
 
 interface BackupData {
 	listsMap: Map<string, List>;
@@ -38,7 +29,7 @@ function replacer(_key: string, value: any) {
 		for (const entry of Object.entries(value)) {
 			const [backupMapKey, ymap] = entry;
 			const map = new Map<string, any>();
-			if (ymap instanceof Y.Map) {
+			if (ymap instanceof YMap) {
 				for (const entry of ymap.entries()) {
 					const [key, value] = entry;
 					map.set(key, value);
@@ -61,28 +52,19 @@ function reviver(_key: string, value: any) {
 }
 
 export class BackupService {
-	dataService?: AppDataService;
+	sharedTypes: SharedTypes;
 
-	constructor() {}
+	constructor(appYSharedTypes: SharedTypes) {
+		this.sharedTypes = appYSharedTypes;
+	}
 
 	async export() {
-		if (!this.dataService) return;
-		const data: AppData = {
-			listsMap: this.dataService.listsMap,
-			tasksMap: this.dataService.tasksMap,
-			timersMap: this.dataService.timersMap,
-			timerIntervalsMap: this.dataService.timerIntervalsMap,
-			countersMap: this.dataService.countersMap,
-			counterRecordsMap: this.dataService.counterRecordsMap
-		};
-		const jsonData = JSON.stringify(data, replacer);
+		const jsonData = JSON.stringify(this.sharedTypes, replacer);
 		const blob = new Blob([jsonData], { type: 'application/json' });
 		saveAs(blob, `unanxious-app-backup-${getUnixEpochFromNow().toFixed(0)}.json`);
 	}
 
 	async import(file: File) {
-		if (!this.dataService) return;
-
 		const {
 			listsMap,
 			tasksMap,
@@ -92,30 +74,30 @@ export class BackupService {
 			counterRecordsMap
 		}: BackupData = JSON.parse(await file.text(), reviver);
 
-		this.dataService.listsMap.clear();
-		this.dataService.tasksMap.clear();
-		this.dataService.timersMap.clear();
-		this.dataService.timerIntervalsMap.clear();
-		this.dataService.countersMap.clear();
-		this.dataService.counterRecordsMap.clear();
+		this.sharedTypes.listsMap.clear();
+		this.sharedTypes.tasksMap.clear();
+		this.sharedTypes.timersMap.clear();
+		this.sharedTypes.timerIntervalsMap.clear();
+		this.sharedTypes.countersMap.clear();
+		this.sharedTypes.counterRecordsMap.clear();
 
 		for (const [k, v] of listsMap) {
-			this.dataService.listsMap.set(k, v);
+			this.sharedTypes.listsMap.set(k, v);
 		}
 		for (const [k, v] of tasksMap) {
-			this.dataService.tasksMap.set(k, v);
+			this.sharedTypes.tasksMap.set(k, v);
 		}
 		for (const [k, v] of timersMap) {
-			this.dataService.timersMap.set(k, v);
+			this.sharedTypes.timersMap.set(k, v);
 		}
 		for (const [k, v] of timerIntervalsMap) {
-			this.dataService.timerIntervalsMap.set(k, v);
+			this.sharedTypes.timerIntervalsMap.set(k, v);
 		}
 		for (const [k, v] of countersMap) {
-			this.dataService.countersMap.set(k, v);
+			this.sharedTypes.countersMap.set(k, v);
 		}
 		for (const [k, v] of counterRecordsMap) {
-			this.dataService.counterRecordsMap.set(k, v);
+			this.sharedTypes.counterRecordsMap.set(k, v);
 		}
 	}
 }

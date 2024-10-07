@@ -5,7 +5,8 @@
 	import { Label } from '$lib/components/ui/label';
 	import { Button } from '$lib/components/ui/button';
 
-	import { type Counter, getAppDataService } from '$lib/data-service.svelte';
+	import type { Counter } from '$lib/app-state';
+	import { getAppDataService } from '$lib/app-state/data-service.svelte';
 
 	const dataService = getAppDataService();
 
