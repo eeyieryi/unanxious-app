@@ -8,39 +8,39 @@
 	import { Button, buttonVariants } from '$lib/components/ui/button';
 
 	import { dhms, padWithZero } from '$lib/datetime';
-	import { getAppDataService } from '$lib/app-state/data-service.svelte';
+	import { getAppDataService } from '$lib/app-state';
 
 	import { TimerDigits, TimerList } from './components';
 
-	const dataService = getAppDataService();
+	const { focusService, tasksService } = getAppDataService();
 
 	let isPaused = $derived(
 		!(
-			dataService.state.selectedTimerLastInterval !== null &&
-			dataService.state.selectedTimerLastInterval.end_time === null
+			focusService.state.selectedTimerLastInterval !== null &&
+			focusService.state.selectedTimerLastInterval.end_time === null
 		)
 	);
 
 	let selectedTimerTask = $derived.by(() => {
-		if (dataService.state.selectedTimer && dataService.state.selectedTimer.task_id) {
-			const taskID = dataService.state.selectedTimer.task_id;
-			const found = dataService.tasksService.state.tasks.get(taskID);
+		if (focusService.state.selectedTimer && focusService.state.selectedTimer.task_id) {
+			const taskID = focusService.state.selectedTimer.task_id;
+			const found = tasksService.state.tasks.get(taskID);
 			if (found) return found;
 		}
 		return null;
 	});
 
 	const timerTaskIDs = $derived(
-		dataService.state.timers.map((timer) => timer.task_id).filter((id) => id !== null)
+		Array.from(focusService.state.timers.values())
+			.map((timer) => timer.task_id)
+			.filter((id) => id !== null)
 	);
 	const availableToAttachTasks = $derived(
-		Array.from(dataService.tasksService.state.tasks.values()).filter(
-			(t) => !timerTaskIDs.includes(t.id)
-		)
+		Array.from(tasksService.state.tasks.values()).filter((t) => !timerTaskIDs.includes(t.id))
 	);
 
-	let selectedTimerStatsToday = $derived(dhms(dataService.state.selectedTimerStats.today));
-	let selectedTimerStatsTotal = $derived(dhms(dataService.state.selectedTimerStats.total));
+	let selectedTimerStatsToday = $derived(dhms(focusService.state.selectedTimerStats.today));
+	let selectedTimerStatsTotal = $derived(dhms(focusService.state.selectedTimerStats.total));
 
 	let createTimerForm = $state<HTMLFormElement>();
 	let createTimerFormInputName = $state('');
@@ -52,7 +52,7 @@
 
 <div class="mb-10 flex max-w-full flex-col space-y-6">
 	<div class="flex items-center justify-between">
-		{#if dataService.state.selectedTimer}
+		{#if focusService.state.selectedTimer}
 			<Dialog.Root>
 				<Dialog.Trigger
 					class={cn(
@@ -63,14 +63,14 @@
 					{#if selectedTimerTask}
 						<span>Task:&nbsp;{selectedTimerTask.name}</span>
 					{:else}
-						<span>Timer:&nbsp;{dataService.state.selectedTimer.name}</span>
+						<span>Timer:&nbsp;{focusService.state.selectedTimer.name}</span>
 					{/if}
 				</Dialog.Trigger>
 				<Dialog.Content>
 					<Dialog.Title>
 						{#if selectedTimerTask}
 							<span class="capitalize">timer:</span>&nbsp;<span
-								>{dataService.state.selectedTimer.name}</span>
+								>{focusService.state.selectedTimer.name}</span>
 						{:else}
 							<span class="capitalize">attach&nbsp;to&nbsp;task</span>
 						{/if}
@@ -81,8 +81,8 @@
 							class={cn(buttonVariants({ variant: 'secondary' }), 'space-x-2')}
 							onclick={() => {
 								if (confirm('are you sure you want to archive this timer?')) {
-									if (!dataService.state.selectedTimer) return;
-									dataService.archiveSelectedTimer();
+									if (!focusService.state.selectedTimer) return;
+									focusService.archiveTimer(focusService.state.selectedTimer);
 								}
 							}}>
 							<Archive class="h-4 w-4" />
@@ -93,8 +93,8 @@
 							class={cn(buttonVariants({ variant: 'destructive' }), 'space-x-2')}
 							onclick={() => {
 								if (confirm('are you sure you want to delete this timer?')) {
-									if (!dataService.state.selectedTimer) return;
-									dataService.deleteSelectedTimer();
+									if (!focusService.state.selectedTimer) return;
+									focusService.deleteTimer(focusService.state.selectedTimer);
 								}
 							}}>
 							<Trash2 class="h-4 w-4" />
@@ -107,8 +107,11 @@
 							<ul>
 								{#each availableToAttachTasks as task (task.id)}
 									<li>
-										<Dialog.Close onclick={() => dataService.attachTaskToTimer(task)}
-											>{task.name}</Dialog.Close>
+										<Dialog.Close
+											onclick={() => {
+												if (!focusService.state.selectedTimer) return;
+												focusService.attachTaskToTimer(focusService.state.selectedTimer, task);
+											}}>{task.name}</Dialog.Close>
 									</li>
 								{/each}
 							</ul>
@@ -136,11 +139,11 @@
 				<span class="capitalize">show&nbsp;archived</span>
 			</Button>
 
-			{#if dataService.state.selectedTimer}
+			{#if focusService.state.selectedTimer}
 				<Button
 					variant="outline"
 					size="icon"
-					onclick={() => (dataService.state.selectedTimerID = null)}>
+					onclick={() => (focusService.state.selectedTimerID = null)}>
 					<X />
 				</Button>
 			{/if}
@@ -148,14 +151,14 @@
 	</div>
 	<div class="flex flex-col items-center justify-center space-y-4">
 		<TimerDigits
-			startTime={dataService.state.selectedTimerLastInterval?.start_time ?? null}
-			endTime={dataService.state.selectedTimerLastInterval?.end_time ?? null}
+			startTime={focusService.state.selectedTimerLastInterval?.start_time ?? null}
+			endTime={focusService.state.selectedTimerLastInterval?.end_time ?? null}
 			isPaused={isPaused} />
 
 		<Button
 			size="icon"
 			variant="outline"
-			onclick={() => dataService.toggleTimer()}>
+			onclick={() => focusService.toggleSelectedTimer()}>
 			{#if isPaused}
 				<Play />
 			{:else}
@@ -193,8 +196,8 @@
 		bind:this={createTimerForm}
 		onsubmit={async (e) => {
 			e.preventDefault();
-			const timer = dataService.createTimer(createTimerFormInputName);
-			dataService.state.selectedTimerID = timer.id;
+			const timer = focusService.createTimer(createTimerFormInputName);
+			focusService.state.selectedTimerID = timer.id;
 			createTimerForm?.reset();
 		}}
 		class="flex items-center space-x-2">

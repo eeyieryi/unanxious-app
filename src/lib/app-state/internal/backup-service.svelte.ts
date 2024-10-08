@@ -18,7 +18,7 @@ interface BackupData {
 	listsMap: Map<string, List>;
 	tasksMap: Map<string, Task>;
 	timersMap: Map<string, Timer>;
-	timerIntervalsMap: Map<string, TimerInterval>;
+	timerIntervalsMap: Map<string, TimerInterval[]>;
 	countersMap: Map<string, Counter>;
 	counterRecordsMap: Map<string, CounterRecord[]>;
 }
@@ -81,23 +81,23 @@ export class BackupService {
 		this.sharedTypes.countersMap.clear();
 		this.sharedTypes.counterRecordsMap.clear();
 
-		for (const [k, v] of listsMap) {
-			this.sharedTypes.listsMap.set(k, v);
+		for (const [listID, list] of listsMap) {
+			this.sharedTypes.listsMap.set(listID, list);
 		}
-		for (const [k, v] of tasksMap) {
-			this.sharedTypes.tasksMap.set(k, v);
+		for (const [taskID, task] of tasksMap) {
+			this.sharedTypes.tasksMap.set(taskID, task);
 		}
-		for (const [k, v] of timersMap) {
-			this.sharedTypes.timersMap.set(k, v);
+		for (const [timerID, timer] of timersMap) {
+			this.sharedTypes.timersMap.set(timerID, timer);
 		}
-		for (const [k, v] of timerIntervalsMap) {
-			this.sharedTypes.timerIntervalsMap.set(k, v);
+		for (const [timerID, timerIntervals] of timerIntervalsMap) {
+			this.sharedTypes.timerIntervalsMap.set(timerID, timerIntervals);
 		}
-		for (const [k, v] of countersMap) {
-			this.sharedTypes.countersMap.set(k, v);
+		for (const [counterID, counter] of countersMap) {
+			this.sharedTypes.countersMap.set(counterID, counter);
 		}
-		for (const [k, v] of counterRecordsMap) {
-			this.sharedTypes.counterRecordsMap.set(k, v);
+		for (const [counterID, counterRecords] of counterRecordsMap) {
+			this.sharedTypes.counterRecordsMap.set(counterID, counterRecords);
 		}
 	}
 }

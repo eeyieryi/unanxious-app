@@ -6,7 +6,7 @@ export interface SharedTypes {
 	listsMap: YMap<List>;
 	tasksMap: YMap<Task>;
 	timersMap: YMap<Timer>;
-	timerIntervalsMap: YMap<TimerInterval>;
+	timerIntervalsMap: YMap<TimerInterval[]>;
 	countersMap: YMap<Counter>;
 	counterRecordsMap: YMap<CounterRecord[]>;
 }

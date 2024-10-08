@@ -2,12 +2,13 @@
 	import { Button } from '$lib/components/ui/button';
 	import { CustomScrollArea } from '$lib/components/ui/custom-scroll-area';
 
-	import { isTimerNotArchived } from '$lib/app-state/data-service.svelte';
-	import { getAppDataService } from '$lib/app-state/data-service.svelte';
+	import { getAppDataService, isTimerNotArchived } from '$lib/app-state';
 
-	const dataService = getAppDataService();
+	const { focusService } = getAppDataService();
 
-	let timersToShow = $derived(dataService.state.timers.filter(isTimerNotArchived));
+	let timersToShow = $derived(
+		Array.from(focusService.state.timers.values()).filter(isTimerNotArchived)
+	);
 </script>
 
 <CustomScrollArea>
@@ -17,7 +18,7 @@
 				<li class="w-full">
 					<Button
 						onclick={() => {
-							dataService.state.selectedTimerID = timer.id;
+							focusService.state.selectedTimerID = timer.id;
 						}}
 						variant="outline"
 						class="w-full">
