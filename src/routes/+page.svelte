@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 
-	import { onMount } from 'svelte';
+	import { type Component, onMount } from 'svelte';
 
 	import { CheckCheck, Timer, Sun, Moon, Settings, Tally5 } from 'lucide-svelte';
 
@@ -15,21 +15,32 @@
 
 	const themeToggler = new ThemeToggler();
 
-	let selectedPage = $state<AvailablePages>('focus');
+	const availablePages = ['tasks', 'focus', 'counter', 'settings'] as const;
+	type AvailablePage = (typeof availablePages)[number];
+	const pages: {
+		[key in AvailablePage]: Component;
+	} = {
+		tasks: TasksApp,
+		focus: FocusApp,
+		counter: CounterApp,
+		settings: SettingsPage
+	};
 
-	const availablePages = ['tasks', 'focus', 'settings', 'counter'] as const;
-	type AvailablePages = (typeof availablePages)[number];
-	function isAvailablePage(name: string): name is AvailablePages {
-		for (const page of availablePages) {
-			if (name === page) {
+	let selectedPageTitle = $state<AvailablePage>('focus');
+	let SelectedPage = $derived(pages[selectedPageTitle]);
+
+	function isAvailablePage(name: string): name is AvailablePage {
+		for (const pageName of availablePages) {
+			if (pageName === name) {
 				return true;
 			}
 		}
 		return false;
 	}
+
 	const INITIAL_PAGE_KEY = 'initialPage';
-	function selectPage(page: AvailablePages) {
-		selectedPage = page;
+	function selectPage(page: AvailablePage) {
+		selectedPageTitle = page;
 		localStorage.setItem(INITIAL_PAGE_KEY, page);
 	}
 	onMount(() => {
@@ -59,7 +70,7 @@
 
 		<Separator />
 
-		{#if selectedPage === 'tasks'}
+		{#if selectedPageTitle === 'tasks'}
 			<Button
 				disabled
 				variant="ghost"
@@ -78,7 +89,7 @@
 
 		<Separator />
 
-		{#if selectedPage === 'focus'}
+		{#if selectedPageTitle === 'focus'}
 			<Button
 				disabled
 				variant="ghost"
@@ -97,7 +108,7 @@
 
 		<Separator />
 
-		{#if selectedPage === 'counter'}
+		{#if selectedPageTitle === 'counter'}
 			<Button
 				disabled
 				variant="ghost"
@@ -117,7 +128,7 @@
 		<Separator />
 
 		<Separator class="mt-auto" />
-		{#if selectedPage === 'settings'}
+		{#if selectedPageTitle === 'settings'}
 			<Button
 				disabled
 				variant="ghost"
@@ -135,17 +146,13 @@
 		{/if}
 	</nav>
 
-	{#if selectedPage === 'tasks'}
-		<TasksApp />
+	{#if selectedPageTitle === 'tasks'}
+		<SelectedPage />
 	{:else}
 		<div class="flex h-full w-full flex-col border-r">
 			<div class="flex flex-col overflow-hidden p-4">
-				{#if selectedPage === 'focus'}
-					<FocusApp />
-				{:else if selectedPage === 'settings'}
-					<SettingsPage />
-				{:else if selectedPage === 'counter'}
-					<CounterApp />
+				{#if selectedPageTitle}
+					<SelectedPage />
 				{:else}
 					<h1>No App Selected</h1>
 				{/if}
