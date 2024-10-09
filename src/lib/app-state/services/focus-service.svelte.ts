@@ -97,7 +97,6 @@ export class FocusService {
 
 		this.timerIntervalsMap.observe((event) => {
 			event.changes.keys.forEach((value, timerID, _changesMap) => {
-				console.log(value, timerID);
 				switch (value.action) {
 					case 'add':
 					case 'update': {
@@ -130,7 +129,6 @@ export class FocusService {
 	toggleSelectedTimer(): void {
 		const timerID = this.state.selectedTimerID ? this.state.selectedTimerID : 'focus';
 		const lastTimerInterval = this.state.selectedTimerLastInterval;
-		console.log(this.state.selectedTimerIntervals);
 
 		if (lastTimerInterval && lastTimerInterval.end_time === null) {
 			this.timerIntervalsMap.set(timerID, [
