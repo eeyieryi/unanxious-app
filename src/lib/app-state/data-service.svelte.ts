@@ -19,7 +19,7 @@ import type {
 import { BackupService } from './internal';
 import { FocusService, TasksService } from './services';
 
-export class AppDataService {
+class AppDataService {
 	private readonly doc: Doc;
 	private readonly persistenceProvider: IndexeddbPersistence;
 
