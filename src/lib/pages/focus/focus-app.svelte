@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Archive, Pause, Play, Trash2, X } from 'lucide-svelte';
+	import { Archive, ArchiveRestore, ChevronLeft, Pause, Play, Trash2, X } from 'lucide-svelte';
 
 	import { cn } from '$lib/utils';
 	import { Input } from '$lib/components/ui/input';
@@ -44,6 +44,8 @@
 
 	let createTimerForm = $state<HTMLFormElement>();
 	let createTimerFormInputName = $state('');
+
+	let showArchived = $state(false);
 </script>
 
 <svelte:head>
@@ -77,17 +79,32 @@
 					</Dialog.Title>
 
 					<div class="flex items-center space-x-2">
-						<Dialog.Close
-							class={cn(buttonVariants({ variant: 'secondary' }), 'space-x-2')}
-							onclick={() => {
-								if (confirm('are you sure you want to archive this timer?')) {
-									if (!focusService.state.selectedTimer) return;
-									focusService.archiveTimer(focusService.state.selectedTimer);
-								}
-							}}>
-							<Archive class="h-4 w-4" />
-							<span class="capitalize">archive</span>
-						</Dialog.Close>
+						{#if showArchived}
+							<Dialog.Close
+								class={cn(buttonVariants({ variant: 'secondary' }), 'space-x-2')}
+								onclick={() => {
+									if (focusService.state.selectedTimer) {
+										focusService.unarchiveTimer(focusService.state.selectedTimer);
+										focusService.state.selectedTimerID = null;
+									}
+								}}>
+								<ArchiveRestore class="h-4 w-4" />
+								<span class="capitalize">restore</span>
+							</Dialog.Close>
+						{:else}
+							<Dialog.Close
+								class={cn(buttonVariants({ variant: 'secondary' }), 'space-x-2')}
+								onclick={() => {
+									if (confirm('are you sure you want to archive this timer?')) {
+										if (!focusService.state.selectedTimer) return;
+										focusService.archiveTimer(focusService.state.selectedTimer);
+										focusService.state.selectedTimerID = null;
+									}
+								}}>
+								<Archive class="h-4 w-4" />
+								<span class="capitalize">archive</span>
+							</Dialog.Close>
+						{/if}
 
 						<Dialog.Close
 							class={cn(buttonVariants({ variant: 'destructive' }), 'space-x-2')}
@@ -124,19 +141,30 @@
 					</Dialog.Footer>
 				</Dialog.Content>
 			</Dialog.Root>
-		{:else}
+		{:else if !showArchived}
 			<Button variant="outline">
 				<span class="font-lg font-mono uppercase">focus</span>
 			</Button>
+		{:else}
+			<span class={cn(buttonVariants({ variant: 'outline' }), 'font-lg font-mono uppercase')}
+				>archived&nbsp;timers</span>
 		{/if}
 
 		<div class="flex items-center space-x-2">
 			<Button
 				class="space-x-2"
 				variant="secondary"
-				onclick={() => {}}>
-				<Archive class="h-4 w-4" />
-				<span class="capitalize">show&nbsp;archived</span>
+				onclick={() => {
+					showArchived = !showArchived;
+					focusService.state.selectedTimerID = null;
+				}}>
+				{#if !showArchived}
+					<Archive class="h-4 w-4" />
+					<span class="capitalize">show&nbsp;archived</span>
+				{:else}
+					<span class="uppercase">go&nbsp;back</span>
+					<ChevronLeft class="h-4 w-4" />
+				{/if}
 			</Button>
 
 			{#if focusService.state.selectedTimer}
@@ -155,17 +183,33 @@
 			endTime={focusService.state.selectedTimerLastInterval?.end_time ?? null}
 			isPaused={isPaused} />
 
-		<Button
-			size="icon"
-			variant="outline"
-			onclick={() => focusService.toggleSelectedTimer()}>
-			{#if isPaused}
-				<Play />
-			{:else}
-				<Pause />
-			{/if}
-		</Button>
+		{#if showArchived && focusService.state.selectedTimer}
+			<Button
+				variant="outline"
+				onclick={() => {
+					if (focusService.state.selectedTimer) {
+						focusService.unarchiveTimer(focusService.state.selectedTimer);
+						focusService.state.selectedTimerID = null;
+					}
+				}}
+				class="flex items-center space-x-2">
+				<ArchiveRestore />
+				<span class="capitalize">restore</span>
+			</Button>
+		{:else}
+			<Button
+				size="icon"
+				variant="outline"
+				onclick={() => focusService.toggleSelectedTimer()}>
+				{#if isPaused}
+					<Play />
+				{:else}
+					<Pause />
+				{/if}
+			</Button>
+		{/if}
 	</div>
+
 	<div class="flex justify-around text-center">
 		<div class="flex w-20 flex-col items-center">
 			<span class="text-muted-foreground">Today</span>
@@ -192,6 +236,7 @@
 			</div>
 		</div>
 	</div>
+
 	<form
 		bind:this={createTimerForm}
 		onsubmit={async (e) => {
@@ -208,4 +253,4 @@
 	</form>
 </div>
 
-<TimerList />
+<TimerList showArchived={showArchived} />

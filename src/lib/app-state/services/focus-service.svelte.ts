@@ -162,11 +162,9 @@ export class FocusService {
 
 	archiveTimer(timer: Timer) {
 		this.timersMap.set(timer.id, { ...timer, archived: true });
-		this.state.selectedTimerID = null;
 	}
 
 	unarchiveTimer(timer: Timer) {
 		this.timersMap.set(timer.id, { ...timer, archived: false });
-		this.state.selectedTimerID = timer.id;
 	}
 }

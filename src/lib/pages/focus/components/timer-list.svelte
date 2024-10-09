@@ -2,12 +2,19 @@
 	import { Button } from '$lib/components/ui/button';
 	import { CustomScrollArea } from '$lib/components/ui/custom-scroll-area';
 
-	import { getAppDataService, isTimerNotArchived } from '$lib/app-state';
+	import { getAppDataService, isTimerArchived, isTimerNotArchived } from '$lib/app-state';
 
 	const { focusService } = getAppDataService();
 
+	type Props = {
+		showArchived: boolean;
+	};
+	let { showArchived }: Props = $props();
+
 	let timersToShow = $derived(
-		Array.from(focusService.state.timers.values()).filter(isTimerNotArchived)
+		Array.from(focusService.state.timers.values()).filter((timer) => {
+			return showArchived ? isTimerArchived(timer) : isTimerNotArchived(timer);
+		})
 	);
 </script>
 
@@ -27,5 +34,9 @@
 				</li>
 			{/each}
 		</ul>
+	{:else if showArchived}
+		<span class="uppercase">no&nbsp;archived&nbsp;timers</span>
+	{:else}
+		<span class="capitalize">no&nbsp;timers</span>
 	{/if}
 </CustomScrollArea>
