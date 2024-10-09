@@ -102,7 +102,6 @@ export class FocusService {
 					case 'add':
 					case 'update': {
 						const timerIntervals = this.timerIntervalsMap.get(timerID)!;
-						console.log(timerIntervals);
 						this.state.timerIntervals.set(timerID, timerIntervals);
 						break;
 					}
