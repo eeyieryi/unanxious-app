@@ -10,16 +10,18 @@
 
 	import { getAppDataService } from '$lib/app-state';
 
-	const dataService = getAppDataService();
+	const { counterService } = getAppDataService();
 
 	let createCounterInputName = $state('');
 	let createCounterInputStep = $state(1);
 	function handleSubmitCreateCounter(event: SubmitEvent) {
 		event.preventDefault();
-		dataService.createCounter(createCounterInputName, createCounterInputStep);
+		counterService.createCounter(createCounterInputName, createCounterInputStep);
 		createCounterInputName = '';
 		createCounterInputStep = 1;
 	}
+
+	let countersToShow = $derived(Array.from(counterService.state.counters.values()));
 </script>
 
 <svelte:head>
@@ -62,9 +64,9 @@
 </div>
 
 <CustomScrollArea>
-	{#if dataService.state.counters.length > 0}
+	{#if countersToShow.length > 0}
 		<ul class="flex flex-col items-center justify-center space-y-4">
-			{#each dataService.state.counters as counter (counter.id)}
+			{#each countersToShow as counter (counter.id)}
 				<CounterItem counter={counter} />
 			{/each}
 		</ul>

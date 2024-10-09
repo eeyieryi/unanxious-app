@@ -8,13 +8,13 @@
 	import type { Counter } from '$lib/app-state';
 	import { getAppDataService } from '$lib/app-state/data-service.svelte';
 
-	const dataService = getAppDataService();
+	const { counterService } = getAppDataService();
 
 	type Props = {
 		counter: Counter;
 	};
 	let { counter }: Props = $props();
-	let counterStats = $derived(dataService.state.countersStats.get(counter.id) || { total: 0 });
+	let counterStats = $derived(counterService.state.countersStats.get(counter.id) || { total: 0 });
 	let stepBy = $state(counter.step);
 </script>
 
@@ -22,7 +22,7 @@
 	<span class="mb-4 mt-4 text-sm font-medium">{counter.name}</span>
 	<div class="mb-12 flex items-center">
 		<Button
-			onclick={() => dataService.decreaseCounter(counter, stepBy)}
+			onclick={() => counterService.decreaseCounter(counter, stepBy)}
 			variant="outline"
 			size="icon"
 			class="h-8 w-8 rounded-r-none">
@@ -33,7 +33,7 @@
 			<span class="font-mono">{counterStats.total}</span>
 		</div>
 		<Button
-			onclick={() => dataService.increaseCounter(counter, stepBy)}
+			onclick={() => counterService.increaseCounter(counter, stepBy)}
 			variant="outline"
 			size="icon"
 			class="h-8 w-8 rounded-l-none">
