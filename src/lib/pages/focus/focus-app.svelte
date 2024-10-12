@@ -151,28 +151,28 @@
 		{/if}
 
 		<div class="flex items-center space-x-2">
-			<Button
-				class="space-x-2"
-				variant="secondary"
-				onclick={() => {
-					showArchived = !showArchived;
-					focusService.state.selectedTimerID = null;
-				}}>
-				{#if !showArchived}
-					<Archive class="h-4 w-4" />
-					<span class="capitalize">show&nbsp;archived</span>
-				{:else}
-					<span class="uppercase">go&nbsp;back</span>
-					<ChevronLeft class="h-4 w-4" />
-				{/if}
-			</Button>
-
 			{#if focusService.state.selectedTimer}
 				<Button
 					variant="outline"
 					size="icon"
 					onclick={() => (focusService.state.selectedTimerID = null)}>
 					<X />
+				</Button>
+			{:else}
+				<Button
+					class="space-x-2"
+					variant="secondary"
+					onclick={() => {
+						showArchived = !showArchived;
+						focusService.state.selectedTimerID = null;
+					}}>
+					{#if !showArchived}
+						<Archive class="h-4 w-4" />
+						<span class="capitalize">show&nbsp;archived</span>
+					{:else}
+						<span class="uppercase">go&nbsp;back</span>
+						<ChevronLeft class="h-4 w-4" />
+					{/if}
 				</Button>
 			{/if}
 		</div>
