@@ -7,8 +7,9 @@
 
 	type Props = {
 		children: Snippet<[]>;
+		showArrows?: boolean;
 	};
-	let { children }: Props = $props();
+	let { showArrows = true, children }: Props = $props();
 
 	let showTopArrow = $state(false);
 	let showBottomArrow = $state(false);
@@ -45,7 +46,7 @@
 </script>
 
 <div class="relative overflow-hidden">
-	{#if showTopArrow}
+	{#if showTopArrow && showArrows}
 		<div
 			class="absolute left-1/2 top-1.5 z-10 -translate-x-1/2 transform rounded-full bg-background/80 p-1 shadow-md">
 			<ChevronUp className="h-4 w-4 text-foreground" />
@@ -64,7 +65,7 @@
 			class="h-px"></div>
 	</ScrollArea>
 
-	{#if showBottomArrow}
+	{#if showBottomArrow && showArrows}
 		<div
 			class="absolute bottom-1.5 left-1/2 z-10 -translate-x-1/2 transform rounded-full bg-background/80 p-1 shadow-md">
 			<ChevronDown className="h-4 w-4 text-foreground" />
