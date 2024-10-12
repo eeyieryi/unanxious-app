@@ -146,10 +146,10 @@
 		{/if}
 	</nav>
 
-	{#if selectedPageTitle === 'tasks'}
-		<SelectedPage />
-	{:else}
-		<div class="flex h-full w-full flex-col border-r">
+	<div class="flex h-full w-full flex-col border-r">
+		{#if selectedPageTitle === 'tasks'}
+			<SelectedPage />
+		{:else}
 			<div class="flex flex-col overflow-hidden p-4">
 				{#if selectedPageTitle}
 					<SelectedPage />
@@ -161,6 +161,6 @@
 				<Separator />
 				<div class="h-10 w-full"></div>
 			</div>
-		</div>
-	{/if}
+		{/if}
+	</div>
 </div>

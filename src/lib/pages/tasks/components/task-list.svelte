@@ -30,7 +30,7 @@
 	}
 </script>
 
-<div class="min-w-[500px] max-w-[500px] space-y-4 border-r px-4 pt-4">
+<div class="space-y-4 px-4 pt-2">
 	<header class="flex h-8 items-center justify-between">
 		<h4 class="capitalize"
 			>list:&nbsp;<span class="font-medium">
