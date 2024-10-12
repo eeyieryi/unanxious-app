@@ -32,62 +32,69 @@
 	let availableLists = $derived(Array.from(tasksService.state.lists.values()));
 </script>
 
-<div class="flex items-center space-x-2">
-	<Button
-		variant="link"
-		size="icon"
-		onclick={() => {
-			tasksService.state.selectedTaskID = null;
-		}}>
-		<ArrowLeft />
-	</Button>
-	<TaskMoveToList
-		availableLists={availableLists}
-		task={task} />
-</div>
+<div class="flex flex-col space-y-4">
+	<div class="flex items-center justify-between space-x-2">
+		<div class="flex items-center space-x-3">
+			<Button
+				class="h-8 w-8"
+				variant="outline"
+				size="icon"
+				onclick={() => {
+					tasksService.state.selectedTaskID = null;
+				}}>
+				<ArrowLeft class="h-5 w-5" />
+			</Button>
 
-<div class="flex items-center space-x-2">
-	<TaskCheckbox task={task} />
-	<TaskDateTimePicker task={task} />
-</div>
+			<TaskMoveToList
+				availableLists={availableLists}
+				task={task} />
+		</div>
 
-<div class="mt-4 flex flex-col space-y-4">
-	<Input
-		onchange={() => {
-			tasksService.updateTask({
-				task: {
-					...task,
-					name: taskName.value
+		<Button
+			size="icon"
+			variant="destructive"
+			class="h-8 w-8"
+			onclick={() => {
+				if (confirm('are you sure you want to delete this task?')) {
+					if (!tasksService.state.selectedTask) return;
+					tasksService.deleteTask({ taskID: task.id });
+					tasksService.state.selectedTaskID = null;
 				}
-			});
-		}}
-		onkeyup={() => {
-			tasksService.state.tasks.set(task.id, { ...task, name: taskName.value });
-		}}
-		type="text"
-		placeholder="No title"
-		bind:value={taskName.value} />
-	<Textarea
-		onchange={() => {
-			tasksService.updateTask({
-				task: {
-					...task,
-					description: taskDescription.value
-				}
-			});
-		}}
-		bind:value={taskDescription.value}></Textarea>
+			}}>
+			<Trash2 class="h-5 w-5" />
+		</Button>
+	</div>
 
-	<Button
-		size="icon"
-		variant="destructive"
-		onclick={() => {
-			if (confirm('are you sure you want to delete this task?')) {
-				if (!tasksService.state.selectedTask) return;
-				tasksService.deleteTask({ taskID: task.id });
-				tasksService.state.selectedTaskID = null;
-			}
-		}}>
-		<Trash2 />
-	</Button>
+	<div class="flex items-center space-x-2">
+		<TaskCheckbox task={task} />
+		<TaskDateTimePicker task={task} />
+	</div>
+
+	<div class="mt-4 flex flex-col space-y-4">
+		<Input
+			onchange={() => {
+				tasksService.updateTask({
+					task: {
+						...task,
+						name: taskName.value
+					}
+				});
+			}}
+			onkeyup={() => {
+				tasksService.state.tasks.set(task.id, { ...task, name: taskName.value });
+			}}
+			type="text"
+			placeholder="No title"
+			bind:value={taskName.value} />
+		<Textarea
+			onchange={() => {
+				tasksService.updateTask({
+					task: {
+						...task,
+						description: taskDescription.value
+					}
+				});
+			}}
+			bind:value={taskDescription.value}></Textarea>
+	</div>
 </div>

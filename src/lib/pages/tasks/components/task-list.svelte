@@ -1,10 +1,13 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
+
 	import clsx from 'clsx';
 	import { Plus, Trash2 } from 'lucide-svelte';
 
 	import { Label } from '$lib/components/ui/label';
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
+	import { CustomScrollArea } from '$lib/components/ui/custom-scroll-area';
 
 	import { TaskCheckbox, TaskView } from '.';
 
@@ -13,6 +16,7 @@
 	const { tasksService } = getAppDataService();
 
 	let createTaskForm = $state<HTMLFormElement>();
+	let createTaskFormNameInput = $state<HTMLInputElement>();
 	let createTaskFormInputName = $state('');
 
 	function handleSubmitCreateTask(e: SubmitEvent) {
@@ -26,12 +30,22 @@
 			}
 			tasksService.state.selectedTaskID = tu.id;
 			createTaskForm?.reset();
+			createTaskFormNameInput?.blur();
 		}
 	}
+
+	interface Props {
+		toggleListShowBtn: Snippet<[]>;
+	}
+	let { toggleListShowBtn }: Props = $props();
 </script>
 
-<div class="space-y-4 px-4 pt-2">
-	<header class="flex h-8 items-center justify-between">
+<div class="flex h-full flex-col space-y-4 px-2 py-4 pb-10">
+	<div class="flex space-x-2">
+		<span class="sr-only">show&nbsp;lists</span>
+		{@render toggleListShowBtn()}
+	</div>
+	<header class="flex h-8 items-center justify-between px-4">
 		<h4 class="capitalize"
 			>list:&nbsp;<span class="font-medium">
 				{#if tasksService.state.selectedList}
@@ -59,15 +73,17 @@
 			</Button>
 		{/if}
 	</header>
+
 	<form
 		bind:this={createTaskForm}
-		class="flex flex-col"
+		class="flex flex-col px-4"
 		onsubmit={handleSubmitCreateTask}>
 		<div class="flex flex-row items-center space-x-2">
 			<Label for="create-task-title-input">
 				<span class="uppercase">task</span>
 			</Label>
 			<Input
+				bind:ref={createTaskFormNameInput}
 				id="create-task-title-input"
 				type="text"
 				name="title"
@@ -81,25 +97,28 @@
 			</Button>
 		</div>
 	</form>
+
 	{#if tasksService.state.selectedListTasks.length > 0}
-		<ul class="flex flex-col items-center justify-center space-y-2">
-			{#each tasksService.state.selectedListTasks as task (task.id)}
-				<li class="flex w-full items-center space-x-2">
-					<TaskCheckbox task={task} />
-					<Button
-						class={clsx('w-full', {
-							'text-gray-500 line-through': task.completed
-						})}
-						variant="outline"
-						size="icon"
-						onclick={() => {
-							tasksService.state.selectedTaskID = task.id;
-						}}>
-						<span>{task.name.length > 0 ? task.name : 'No title'}</span>
-					</Button>
-				</li>
-			{/each}
-		</ul>
+		<CustomScrollArea showArrows={tasksService.state.selectedTask === null}>
+			<ul class="flex flex-col items-center justify-center space-y-2">
+				{#each tasksService.state.selectedListTasks as task (task.id)}
+					<li class="flex w-full items-center space-x-2">
+						<TaskCheckbox task={task} />
+						<Button
+							class={clsx('w-full', {
+								'text-gray-500 line-through': task.completed
+							})}
+							variant="outline"
+							size="icon"
+							onclick={() => {
+								tasksService.state.selectedTaskID = task.id;
+							}}>
+							<span>{task.name.length > 0 ? task.name : 'No title'}</span>
+						</Button>
+					</li>
+				{/each}
+			</ul>
+		</CustomScrollArea>
 	{:else}
 		<div class="flex items-center justify-center">
 			<span class="font-bold uppercase">EMPTY LIST</span>
@@ -108,7 +127,7 @@
 </div>
 
 {#if tasksService.state.selectedTask}
-	<div class="flex flex-col p-4">
+	<div class="absolute left-0 top-0 flex h-full w-full flex-col bg-background p-4">
 		<TaskView />
 	</div>
 {/if}

@@ -63,9 +63,9 @@
 	</Button>
 {/snippet}
 
-<div class="relative h-full">
+<div class="relative flex h-full flex-col">
 	{#if showNav}
-		<nav class="absolute flex h-full w-full max-w-full flex-col space-y-2 bg-background px-2 py-2">
+		<nav class="flex h-full w-full max-w-full flex-col space-y-4 bg-background px-4 py-2 pb-10">
 			<header class="flex justify-between">
 				<div class="flex items-center space-x-2">
 					<ListTodo />
@@ -88,7 +88,7 @@
 
 			<form
 				bind:this={createListForm}
-				class="mt-2 flex flex-row space-x-2"
+				class="mt-2 flex flex-row space-x-2 px-2"
 				onsubmit={handleSubmitCreateList}>
 				<Input
 					name="title"
@@ -101,7 +101,7 @@
 			</form>
 
 			<CustomScrollArea>
-				<div class="flex flex-col space-y-2 py-4">
+				<div class="flex flex-col space-y-2">
 					{#each fixedLists as fixedList (fixedList.id)}
 						{@render item(fixedList)}
 					{/each}
@@ -112,15 +112,8 @@
 				</div>
 			</CustomScrollArea>
 		</nav>
-	{:else}
-		<div class="space-x-2 py-2">
-			<span class="sr-only">show&nbsp;lists</span>
-			{@render toggleListShowBtn()}
-		</div>
-	{/if}
-
-	{#if tasksService.state.selectedListID}
-		<TaskList />
+	{:else if tasksService.state.selectedListID}
+		<TaskList toggleListShowBtn={toggleListShowBtn} />
 	{:else}
 		<p>Select a list to see its tasks</p>
 	{/if}
