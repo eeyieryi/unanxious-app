@@ -25,13 +25,18 @@
 			}
 		});
 	}
+
+	let listName = $derived.by(() => {
+		const found = availableLists.find((l) => l.id === task.list_id);
+		if (found) {
+			return `list: ${found.name}`;
+		}
+		return 'no list';
+	});
 </script>
 
 <Dialog.Root>
-	<Dialog.Trigger
-		>{task.list_id
-			? (availableLists.find((l) => l.id === task.list_id)?.name ?? 'No List')
-			: 'No List'}</Dialog.Trigger>
+	<Dialog.Trigger class="capitalize">{listName}</Dialog.Trigger>
 	<Dialog.Content class="w-full max-w-48">
 		<Dialog.Title>Select List</Dialog.Title>
 		<ul>
