@@ -9,7 +9,7 @@
 	const { uiPrefsService } = getAppDataService();
 </script>
 
-<Dialog.Root open={true}>
+<Dialog.Root>
 	<Dialog.Trigger>
 		<Button
 			variant="outline"
