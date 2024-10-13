@@ -13,7 +13,7 @@ import type {
 	SharedTypes
 } from './models';
 import { BackupService } from './internal';
-import { FocusService, TasksService, CounterService } from './services';
+import { FocusService, TasksService, CounterService, UIPreferencesService } from './services';
 
 class AppDataService {
 	private readonly doc: Doc;
@@ -26,7 +26,11 @@ class AppDataService {
 	public readonly focusService: FocusService;
 	public readonly counterService: CounterService;
 
+	public readonly uiPrefsService: UIPreferencesService;
+
 	constructor() {
+		this.uiPrefsService = new UIPreferencesService();
+
 		this.doc = new Doc();
 
 		this.sharedTypes = {

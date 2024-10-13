@@ -9,11 +9,11 @@
 	import { Button } from '$lib/components/ui/button';
 	import { CustomScrollArea } from '$lib/components/ui/custom-scroll-area';
 
-	import { TaskCheckbox, TaskView } from '.';
+	import { TaskCheckbox, TaskView, TaskUiPrefsDialog } from '.';
 
 	import { getAppDataService } from '$lib/app-state/data-service.svelte';
 
-	const { tasksService } = getAppDataService();
+	const { tasksService, uiPrefsService } = getAppDataService();
 
 	let createTaskForm = $state<HTMLFormElement>();
 	let createTaskFormNameInput = $state<HTMLInputElement>();
@@ -38,11 +38,21 @@
 		toggleListShowBtn: Snippet<[]>;
 	}
 	let { toggleListShowBtn }: Props = $props();
+
+	let tasksToShow = $derived(
+		tasksService.state.selectedListTasks.filter((task) => {
+			if (uiPrefsService.state.showCompletedTasks) {
+				return true;
+			}
+			return !task.completed;
+		})
+	);
 </script>
 
 <div class="flex h-full flex-col space-y-4 px-2 py-4 pb-10">
-	<div class="flex">
+	<div class="flex justify-between">
 		{@render toggleListShowBtn()}
+		<TaskUiPrefsDialog />
 	</div>
 	<header class="flex h-8 items-center justify-between px-4">
 		<h4 class="capitalize"
@@ -97,10 +107,10 @@
 		</div>
 	</form>
 
-	{#if tasksService.state.selectedListTasks.length > 0}
+	{#if tasksToShow.length > 0}
 		<CustomScrollArea showArrows={tasksService.state.selectedTask === null}>
 			<ul class="flex flex-col items-center justify-center space-y-2">
-				{#each tasksService.state.selectedListTasks as task (task.id)}
+				{#each tasksToShow as task (task.id)}
 					<li class="flex w-full items-center space-x-2">
 						<TaskCheckbox task={task} />
 						<Button
