@@ -51,6 +51,7 @@
 
 {#snippet toggleListShowBtn()}
 	<Button
+		class="w-[140px] max-w-[140px] justify-between"
 		onclick={() => (showNav = !showNav)}
 		variant="outline">
 		{#if showNav}
@@ -67,12 +68,11 @@
 	{#if showNav}
 		<nav class="flex h-full w-full max-w-full flex-col space-y-4 bg-background px-4 py-2 pb-10">
 			<header class="flex justify-between">
-				<div class="flex items-center space-x-2">
-					<ListTodo />
-					<h1 class="text-lg font-bold leading-none">Task Lists</h1>
-				</div>
-
 				{@render toggleListShowBtn()}
+				<div class="flex items-center space-x-2">
+					<h1 class="text-lg font-bold leading-none">Lists</h1>
+					<ListTodo />
+				</div>
 			</header>
 
 			<Separator />

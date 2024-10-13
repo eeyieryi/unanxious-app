@@ -7,6 +7,7 @@
 	import { Label } from '$lib/components/ui/label';
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
+	import { Separator } from '$lib/components/ui/separator';
 	import { CustomScrollArea } from '$lib/components/ui/custom-scroll-area';
 
 	import { TaskCheckbox, TaskView, TaskUiPrefsDialog } from '.';
@@ -48,11 +49,14 @@
 	);
 </script>
 
-<div class="flex h-full flex-col space-y-4 px-2 py-4 pb-10">
+<div class="flex h-full w-full max-w-full flex-col space-y-4 bg-background px-4 py-2 pb-10">
 	<div class="flex justify-between">
 		{@render toggleListShowBtn()}
 		<TaskUiPrefsDialog />
 	</div>
+
+	<Separator />
+
 	<header class="flex h-8 items-center justify-between px-4">
 		<h4 class="capitalize"
 			>list:&nbsp;<span class="font-medium">
