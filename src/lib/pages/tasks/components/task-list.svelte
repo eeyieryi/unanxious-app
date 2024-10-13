@@ -28,9 +28,8 @@
 			if (tasksService.state.selectedListID !== tu.list_id) {
 				tasksService.state.selectedListID = tu.list_id;
 			}
-			tasksService.state.selectedTaskID = tu.id;
 			createTaskForm?.reset();
-			createTaskFormNameInput?.blur();
+			createTaskFormNameInput?.focus();
 		}
 	}
 
