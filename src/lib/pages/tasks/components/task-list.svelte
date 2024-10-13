@@ -41,8 +41,7 @@
 </script>
 
 <div class="flex h-full flex-col space-y-4 px-2 py-4 pb-10">
-	<div class="flex space-x-2">
-		<span class="sr-only">show&nbsp;lists</span>
+	<div class="flex">
 		{@render toggleListShowBtn()}
 	</div>
 	<header class="flex h-8 items-center justify-between px-4">
