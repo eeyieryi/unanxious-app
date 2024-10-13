@@ -7,10 +7,10 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Button, buttonVariants } from '$lib/components/ui/button';
 
-	import { dhms, padWithZero } from '$lib/datetime';
+	import { dhms } from '$lib/datetime';
 	import { getAppDataService } from '$lib/app-state';
 
-	import { TimerDigits, TimerList } from './components';
+	import { TimerDigits, TimerList, TimerStats } from './components';
 
 	const { focusService, tasksService } = getAppDataService();
 
@@ -214,25 +214,21 @@
 		<div class="flex w-20 flex-col items-center">
 			<span class="text-muted-foreground">Today</span>
 			<div class="flex items-center font-mono">
-				{#if selectedTimerStatsToday.hours > 0}
-					<span>{padWithZero(selectedTimerStatsToday.hours)}</span>
-					<span>:</span>
-				{/if}
-				<span>{padWithZero(selectedTimerStatsToday.minutes)}</span>
-				<span>:</span>
-				<span>{padWithZero(selectedTimerStatsToday.seconds)}</span>
+				<TimerStats
+					withDHMS={selectedTimerStatsToday}
+					hours={selectedTimerStatsToday.hours > 0}
+					minutes
+					seconds />
 			</div>
 		</div>
 		<div class="flex w-20 flex-col items-center">
 			<span class="text-muted-foreground">Total</span>
 			<div class="flex items-center font-mono">
-				{#if selectedTimerStatsTotal.hours > 0}
-					<span>{padWithZero(selectedTimerStatsTotal.hours)}</span>
-					<span>:</span>
-				{/if}
-				<span>{padWithZero(selectedTimerStatsTotal.minutes)}</span>
-				<span>:</span>
-				<span>{padWithZero(selectedTimerStatsTotal.seconds)}</span>
+				<TimerStats
+					withDHMS={selectedTimerStatsTotal}
+					days
+					hours
+					minutes />
 			</div>
 		</div>
 	</div>
