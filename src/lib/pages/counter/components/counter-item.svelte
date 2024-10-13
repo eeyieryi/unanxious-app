@@ -47,6 +47,7 @@
 			class="font-extralight capitalize"
 			for="counter-{counter.id}-step-by">step&nbsp;by</Label>
 		<Input
+			onchange={() => counterService.updateCounter({ ...counter, step: stepBy })}
 			id="counter-{counter.id}-step-by"
 			class="h-8 w-16 text-center font-mono"
 			type="number"

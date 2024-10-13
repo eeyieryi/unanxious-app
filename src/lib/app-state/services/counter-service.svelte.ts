@@ -81,6 +81,10 @@ export class CounterService {
 		this.countersMap.set(counter.id, counter);
 	}
 
+	updateCounter(counter: Counter) {
+		this.countersMap.set(counter.id, counter);
+	}
+
 	increaseCounter(counter: Counter, by: number) {
 		const current = this.counterRecordsMap.get(counter.id) || [];
 		const counterRecord: CounterRecord = {
