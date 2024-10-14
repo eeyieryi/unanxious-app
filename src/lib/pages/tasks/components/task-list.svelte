@@ -117,11 +117,10 @@
 					<li class="flex w-full items-center space-x-2">
 						<TaskCheckbox task={task} />
 						<Button
-							class={clsx('w-full', {
+							class={clsx('w-full text-wrap', {
 								'text-gray-500 line-through': task.completed
 							})}
 							variant="outline"
-							size="icon"
 							onclick={() => {
 								tasksService.state.selectedTaskID = task.id;
 							}}>
