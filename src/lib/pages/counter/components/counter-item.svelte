@@ -5,6 +5,7 @@
 	import { Label } from '$lib/components/ui/label';
 	import { Button } from '$lib/components/ui/button';
 
+	import { formatDueAt } from '$lib/datetime';
 	import type { Counter } from '$lib/app-state';
 	import { getAppDataService } from '$lib/app-state/data-service.svelte';
 
@@ -14,13 +15,18 @@
 		counter: Counter;
 	};
 	let { counter }: Props = $props();
-	let counterStats = $derived(counterService.state.countersStats.get(counter.id) || { total: 0 });
+	let counterStats = $derived(
+		counterService.state.countersStats.get(counter.id) || {
+			total: 0,
+			lastUpdatedAt: 0
+		}
+	);
 	let stepBy = $state(counter.step);
 </script>
 
 <li class="relative flex w-full flex-col items-center justify-start rounded-md border">
 	<span class="mb-4 mt-4 text-sm font-medium">{counter.name}</span>
-	<div class="mb-12 flex items-center">
+	<div class="mb-2 flex items-center">
 		<Button
 			onclick={() => counterService.decreaseCounter(counter, stepBy)}
 			variant="outline"
@@ -40,6 +46,12 @@
 			<Plus class="h-4 w-4" />
 			<span class="sr-only">increase</span>
 		</Button>
+	</div>
+
+	<div class="mb-10">
+		{#if counterStats.lastUpdatedAt > 0}
+			{formatDueAt(counterStats.lastUpdatedAt)}
+		{/if}
 	</div>
 
 	<div class="absolute bottom-1 right-1 flex items-center space-x-2">

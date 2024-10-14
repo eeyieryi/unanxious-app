@@ -50,11 +50,15 @@ export class CounterService {
 					case 'update': {
 						const counterRecords = this.counterRecordsMap.get(counterID) || [];
 						const counterStats: CounterStats = {
-							total: 0
+							total: 0,
+							lastUpdatedAt: 0
 						};
 						for (const record of counterRecords) {
 							counterStats.total += record.increased_by ?? 0;
 							counterStats.total -= record.decreased_by ?? 0;
+							if (record.created_at > counterStats.lastUpdatedAt) {
+								counterStats.lastUpdatedAt = record.created_at;
+							}
 						}
 						this.state.countersRecords.set(counterID, counterRecords);
 						this.state.countersStats.set(counterID, counterStats);

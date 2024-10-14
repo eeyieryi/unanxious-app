@@ -13,4 +13,5 @@ export interface CounterRecord {
 
 export interface CounterStats {
 	total: number;
+	lastUpdatedAt: number; // time when the counter was last increased/decreased
 }
