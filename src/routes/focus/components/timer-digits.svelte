@@ -9,15 +9,28 @@
 	let { isPaused, startTime, endTime }: Props = $props();
 
 	let now = $state<number>(getUnixEpochFromNow());
-	let totalSeconds = $derived(startTime ? (endTime ? endTime - startTime : now - startTime) : 0);
+
+	let totalSeconds = $derived.by(() => {
+		if (isPaused || endTime) {
+			if (startTime && endTime) {
+				return endTime - startTime;
+			}
+			return 0;
+		}
+		if (startTime) return now - startTime;
+		return 0;
+	});
+
 	let time = $derived(dhms(totalSeconds));
 
+	function initTimer(): number {
+		return setInterval(() => {
+			now = getUnixEpochFromNow();
+		}, 1000) as unknown as number;
+	}
+
 	$effect(() => {
-		const intervalID = setInterval(() => {
-			if (!isPaused) {
-				now = getUnixEpochFromNow();
-			}
-		}, 1000);
+		const intervalID = initTimer();
 		return () => {
 			clearInterval(intervalID);
 		};
