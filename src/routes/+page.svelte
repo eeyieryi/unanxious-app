@@ -1,1 +1,1 @@
-<h1>No App Selected</h1>
+<h1>Select an App on the left</h1>
