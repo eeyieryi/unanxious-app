@@ -51,9 +51,7 @@
 		</div>
 
 		<Button
-			size="icon"
-			variant="destructive"
-			class="h-8 w-8"
+			class="space-x-2 bg-destructive/40 text-destructive-foreground hover:bg-destructive"
 			onclick={() => {
 				if (confirm('are you sure you want to delete this task?')) {
 					if (!tasksService.state.selectedTask) return;
@@ -61,6 +59,7 @@
 					tasksService.state.selectedTaskID = null;
 				}
 			}}>
+			<span class="capitalize">delete&nbsp;task</span>
 			<Trash2 class="h-5 w-5" />
 		</Button>
 	</div>
@@ -87,6 +86,7 @@
 			placeholder="No title"
 			bind:value={taskName.value} />
 		<Textarea
+			class="h-72"
 			onchange={() => {
 				tasksService.updateTask({
 					task: {
