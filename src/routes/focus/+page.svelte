@@ -10,7 +10,7 @@
 	import { dhms } from '$lib/datetime';
 	import { getAppDataService } from '$lib/app-state';
 
-	import { TimerDigits, TimerList, TimerStats } from './components';
+	import { TimerDigits, TimerList, TimerStats, FocusOptions } from './components';
 
 	const { focusService, tasksService } = getAppDataService();
 
@@ -46,6 +46,10 @@
 	let createTimerFormInputName = $state('');
 
 	let showArchived = $state(false);
+	const toggleShowArchived = () => {
+		showArchived = !showArchived;
+		focusService.state.selectedTimerID = null;
+	};
 </script>
 
 <svelte:head>
@@ -151,28 +155,23 @@
 		{/if}
 
 		<div class="flex items-center space-x-2">
+			{#if showArchived}
+				<Button
+					class="space-x-2"
+					variant="outline"
+					onclick={() => toggleShowArchived()}>
+					<ChevronLeft class="h-4 w-4" />
+					<span class="uppercase">go&nbsp;back</span>
+				</Button>
+			{:else}
+				<FocusOptions handleShowArchived={() => toggleShowArchived()} />
+			{/if}
 			{#if focusService.state.selectedTimer}
 				<Button
 					variant="outline"
 					size="icon"
 					onclick={() => (focusService.state.selectedTimerID = null)}>
 					<X />
-				</Button>
-			{:else}
-				<Button
-					class="space-x-2"
-					variant="secondary"
-					onclick={() => {
-						showArchived = !showArchived;
-						focusService.state.selectedTimerID = null;
-					}}>
-					{#if !showArchived}
-						<Archive class="h-4 w-4" />
-						<span class="capitalize">show&nbsp;archived</span>
-					{:else}
-						<span class="uppercase">go&nbsp;back</span>
-						<ChevronLeft class="h-4 w-4" />
-					{/if}
 				</Button>
 			{/if}
 		</div>
