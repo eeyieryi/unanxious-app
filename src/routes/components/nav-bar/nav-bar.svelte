@@ -1,7 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { goto, onNavigate } from '$app/navigation';
 
 	import { CheckCheck, Timer, Sun, Moon, Settings, Tally5 } from 'lucide-svelte';
 
@@ -10,43 +8,11 @@
 
 	import { ThemeToggler } from '$lib/toggle-theme';
 
-	import NavLink from './nav-link.svelte';
-	import DisabledNavLink from './disabled-nav-link.svelte';
+	import NavItem from './nav-item.svelte';
 
 	const themeToggler = new ThemeToggler();
 
-	let selectedPageTitle = $derived($page.url.pathname.replace('/', ''));
-
-	const availablePages = ['tasks', 'focus', 'counter', 'settings'] as const;
-	type AvailablePage = (typeof availablePages)[number];
-
-	function isAvailablePage(name: string): name is AvailablePage {
-		for (const pageName of availablePages) {
-			if (pageName === name) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	const INITIAL_PAGE_KEY = 'initialPage';
-	function selectPage(page: AvailablePage) {
-		goto(`/${page}`, { replaceState: true });
-	}
-
-	onMount(() => {
-		const initialPage = localStorage.getItem(INITIAL_PAGE_KEY);
-		if (initialPage && isAvailablePage(initialPage)) {
-			selectPage(initialPage);
-		}
-	});
-
-	onNavigate((navigation) => {
-		const pathname = (navigation.to?.url.pathname || '').replace('/', '');
-		if (isAvailablePage(pathname)) {
-			localStorage.setItem(INITIAL_PAGE_KEY, pathname);
-		}
-	});
+	let currentPage = $derived($page.url.pathname);
 </script>
 
 <nav class="flex w-full min-w-[40px] max-w-[40px] flex-col items-center border-r">
@@ -61,50 +27,35 @@
 
 	<Separator />
 
-	{#if selectedPageTitle === 'tasks'}
-		<DisabledNavLink>
-			<CheckCheck class="h-6 w-6" />
-		</DisabledNavLink>
-	{:else}
-		<NavLink href="/tasks">
-			<CheckCheck class="h-6 w-6" />
-		</NavLink>
-	{/if}
+	<NavItem
+		href="/tasks"
+		disabled={currentPage.includes('tasks')}>
+		<CheckCheck class="h-6 w-6" />
+	</NavItem>
 
 	<Separator />
 
-	{#if selectedPageTitle === 'focus'}
-		<DisabledNavLink>
-			<Timer class="h-6 w-6" />
-		</DisabledNavLink>
-	{:else}
-		<NavLink href="/focus">
-			<Timer class="h-6 w-6" />
-		</NavLink>
-	{/if}
+	<NavItem
+		href="/focus"
+		disabled={currentPage.includes('focus')}>
+		<Timer class="h-6 w-6" />
+	</NavItem>
 
 	<Separator />
 
-	{#if selectedPageTitle === 'counter'}
-		<DisabledNavLink>
-			<Tally5 class="h-6 w-6" />
-		</DisabledNavLink>
-	{:else}
-		<NavLink href="/counter">
-			<Tally5 class="h-6 w-6" />
-		</NavLink>
-	{/if}
+	<NavItem
+		href="/counter"
+		disabled={currentPage.includes('counter')}>
+		<Tally5 class="h-6 w-6" />
+	</NavItem>
 
 	<Separator />
 
 	<Separator class="mt-auto" />
-	{#if selectedPageTitle === 'settings'}
-		<DisabledNavLink>
-			<Settings class="h-6 w-6" />
-		</DisabledNavLink>
-	{:else}
-		<NavLink href="/settings">
-			<Settings class="h-6 w-6" />
-		</NavLink>
-	{/if}
+
+	<NavItem
+		href="/settings"
+		disabled={currentPage.includes('settings')}>
+		<Settings class="h-6 w-6" />
+	</NavItem>
 </nav>
