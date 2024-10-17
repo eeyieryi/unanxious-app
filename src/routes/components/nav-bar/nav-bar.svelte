@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import { goto, onNavigate } from '$app/navigation';
 
 	import { CheckCheck, Timer, Sun, Moon, Settings, Tally5 } from 'lucide-svelte';
 
@@ -13,6 +15,23 @@
 	const themeToggler = new ThemeToggler();
 
 	let currentPage = $derived($page.url.pathname);
+
+	const initialPage = 'initialPage';
+
+	onMount(() => {
+		if (currentPage === '/') {
+			const lastOpenenedPage = localStorage.getItem(initialPage);
+			if (lastOpenenedPage) {
+				goto(lastOpenenedPage, { replaceState: true });
+			}
+		}
+	});
+
+	onNavigate((navigation) => {
+		if (navigation.to && navigation.to.url.pathname !== '/') {
+			localStorage.setItem(initialPage, navigation.to.url.pathname);
+		}
+	});
 </script>
 
 <nav class="flex w-full min-w-[40px] max-w-[40px] flex-col items-center border-r">
