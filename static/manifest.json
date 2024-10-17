@@ -1,8 +1,8 @@
 {
 	"$schema": "http://json.schemastore.org/web-manifest",
+	"name": "Unanxious",
 	"short_name": "Unanxious",
-	"name": "Unanxious APP",
-	"description": "Turn off anxiety switch",
+	"description": "Flip the anxiety switch off",
 	"scope": "/",
 	"icons": [
 		{

@@ -11,7 +11,7 @@
 </script>
 
 <svelte:head>
-	<title>Unanxious APP</title>
+	<title>Unanxious</title>
 </svelte:head>
 
 <div class="flex h-screen w-screen max-w-[500px] flex-row border">
