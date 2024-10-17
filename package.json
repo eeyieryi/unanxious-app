@@ -38,8 +38,6 @@
 	"type": "module",
 	"dependencies": {
 		"@internationalized/date": "3.5.5",
-		"@y-sweet/client": "^0.4.0",
-		"@y-sweet/sdk": "^0.4.0",
 		"bits-ui": "^0.21.16",
 		"clsx": "^2.1.1",
 		"file-saver": "^2.0.5",
