@@ -1,4 +1,3 @@
-import NavLink from './nav-link.svelte';
-import DisabledNavLink from './disabled-nav-link.svelte';
+import NavBar from './nav-bar.svelte';
 
-export { NavLink, DisabledNavLink };
+export { NavBar };
