@@ -1,38 +1,52 @@
-# create-svelte
+# Unanxious
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+Free your memory slots from events that are not to be done at the moment.
 
-## Creating a project
+Keep it away from now, and bring it closer when it's time to do so.
 
-If you're seeing this, you've probably already done this step. Congrats!
+> [!WARNING]
+> This app is under active development. New deployments may break data model compatibility with previous versions, meaning that previous saved data may be unusable with the new version without manual intervension.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+## Functionality
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+After fetching the static assets, these will be cached and the website will be available to use offline.
+
+All the data is stored and persisted on the browser. Because of that fact, clearing the browser's data will also make it so that the saved app data be deleted. Make sure to backup your data before doing so.
+
+Backup data may be exported and imported on different clients/devices.
+
+> [!CAUTION]
+> When importing data, all data is overridden.
+
+Exported data is a JSON file with unencrypted data.
+
+## Features
+
+- Tasks (TODOs)
+- Focus (Timer Tracking)
+- Counter (Count Tracker)
+- Backup/Restore
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### Requirements
+
+Bun must be installed <https://bun.sh/docs/installation>
+
+Make sure you have bun install and then proceed with the following steps
+
+Once you've cloned this repository, install the dependencies with `bun install --frozen-lockfile`, and then start a development server:
 
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+bun run dev
 ```
 
 ## Building
 
-To create a production version of your app:
+To create a production version of this app:
 
 ```bash
-npm run build
+bun run build
 ```
 
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+You can preview the production build with `bun run preview`.
