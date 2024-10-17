@@ -49,7 +49,7 @@
 	);
 </script>
 
-<div class="flex h-full w-full max-w-full flex-col space-y-4 bg-background px-4 py-2 pb-10">
+<div class="flex h-full w-full max-w-full flex-col space-y-4 bg-background">
 	<div class="flex justify-between">
 		{@render toggleListShowBtn()}
 		<TaskUiPrefsDialog />
@@ -138,7 +138,7 @@
 </div>
 
 {#if tasksService.state.selectedTask}
-	<div class="absolute left-0 top-0 flex h-full w-full flex-col bg-background p-4">
+	<div class="absolute left-0 top-0 flex h-full w-full flex-col bg-background">
 		<TaskView />
 	</div>
 {/if}

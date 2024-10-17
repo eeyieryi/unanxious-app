@@ -29,7 +29,7 @@
 </svelte:head>
 
 <div class="mb-6 flex max-w-full flex-col space-y-6">
-	<header class="flex items-center space-x-2">
+	<header class="mx-4 mt-2 flex items-center space-x-2">
 		<Tally5 />
 		<h1 class="text-lg font-bold leading-none">Counter</h1>
 	</header>

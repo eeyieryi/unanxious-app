@@ -66,7 +66,7 @@
 
 <div class="relative flex h-full flex-col">
 	{#if showNav}
-		<nav class="flex h-full w-full max-w-full flex-col space-y-4 bg-background px-4 py-2 pb-10">
+		<nav class="flex h-full w-full max-w-full flex-col space-y-4 bg-background">
 			<header class="flex justify-between">
 				{@render toggleListShowBtn()}
 				<div class="flex items-center space-x-2">

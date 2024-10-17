@@ -14,13 +14,14 @@
 	<title>Unanxious APP</title>
 </svelte:head>
 
-<div class="flex h-screen w-screen max-w-[500px] flex-row">
+<div class="flex h-screen w-screen max-w-[500px] flex-row border">
 	<NavBar />
 
-	<div class="flex h-full w-full flex-col border-r">
-		<div class="flex flex-col overflow-hidden p-4">
+	<div class="flex h-full w-full flex-col">
+		<main class="flex w-full flex-col overflow-hidden p-4">
 			{@render children()}
-		</div>
+		</main>
+
 		<Footer />
 	</div>
 </div>
