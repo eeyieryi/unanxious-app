@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { ArrowLeft, Trash2 } from 'lucide-svelte';
+	import { ArrowLeft } from 'lucide-svelte';
 
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
 	import { Textarea } from '$lib/components/ui/textarea';
 
 	import { TaskCheckbox, TaskMoveToList, TaskDateTimePicker } from '.';
+	import { TaskDetailsOptions } from './dialogs';
 
 	import { getAppDataService } from '$lib/app-state/data-service.svelte';
 
@@ -50,18 +51,7 @@
 				task={task} />
 		</div>
 
-		<Button
-			class="space-x-2 bg-destructive/40 text-destructive-foreground hover:bg-destructive"
-			onclick={() => {
-				if (confirm('are you sure you want to delete this task?')) {
-					if (!tasksService.state.selectedTask) return;
-					tasksService.deleteTask({ taskID: task.id });
-					tasksService.state.selectedTaskID = null;
-				}
-			}}>
-			<span class="capitalize">delete&nbsp;task</span>
-			<Trash2 class="h-5 w-5" />
-		</Button>
+		<TaskDetailsOptions task={task} />
 	</div>
 
 	<div class="flex items-center space-x-2">
