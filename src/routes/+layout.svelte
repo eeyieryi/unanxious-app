@@ -18,7 +18,7 @@
 	<NavBar />
 
 	<div class="flex h-full w-full flex-col">
-		<main class="flex w-full flex-col overflow-hidden p-4">
+		<main class="flex w-full grow flex-col overflow-hidden p-4">
 			{@render children()}
 		</main>
 
