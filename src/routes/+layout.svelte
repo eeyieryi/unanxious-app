@@ -1,9 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 
-	import { Separator } from '$lib/components/ui/separator';
-
-	import { NavBar } from './components';
+	import { Footer, NavBar } from './components';
 
 	import { setAppDataService } from '$lib/app-state';
 
@@ -23,9 +21,6 @@
 		<div class="flex flex-col overflow-hidden p-4">
 			{@render children()}
 		</div>
-		<div class="mt-auto">
-			<Separator />
-			<div class="h-10 w-full"></div>
-		</div>
+		<Footer />
 	</div>
 </div>
