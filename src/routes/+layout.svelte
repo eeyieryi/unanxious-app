@@ -7,13 +7,13 @@
 
 	import { CheckCheck, Timer, Sun, Moon, Settings, Tally5 } from 'lucide-svelte';
 
-	import { Button, buttonVariants } from '$lib/components/ui/button';
+	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
 
 	import { ThemeToggler } from '$lib/toggle-theme/theme-toggler.svelte';
 
-	import { cn } from '$lib/utils';
 	import { setAppDataService } from '$lib/app-state';
+	import { DisabledNavLink, NavLink } from './components';
 
 	const themeToggler = new ThemeToggler();
 
@@ -71,79 +71,50 @@
 		<Separator />
 
 		{#if selectedPageTitle === 'tasks'}
-			<Button
-				disabled
-				variant="ghost"
-				size="icon">
+			<DisabledNavLink>
 				<CheckCheck class="h-6 w-6" />
-			</Button>
+			</DisabledNavLink>
 		{:else}
-			<a
-				class={cn(
-					buttonVariants({ variant: 'ghost', size: 'icon' }),
-					'hover:rounded-none hover:outline-none'
-				)}
-				href="/tasks">
+			<NavLink href="/tasks">
 				<CheckCheck class="h-6 w-6" />
-			</a>
+			</NavLink>
 		{/if}
 
 		<Separator />
 
 		{#if selectedPageTitle === 'focus'}
-			<Button
-				disabled
-				variant="ghost"
-				size="icon">
+			<DisabledNavLink>
 				<Timer class="h-6 w-6" />
-			</Button>
+			</DisabledNavLink>
 		{:else}
-			<Button
-				onclick={() => selectPage('focus')}
-				class="hover:rounded-none hover:outline-none"
-				variant="ghost"
-				size="icon">
+			<NavLink href="/focus">
 				<Timer class="h-6 w-6" />
-			</Button>
+			</NavLink>
 		{/if}
 
 		<Separator />
 
 		{#if selectedPageTitle === 'counter'}
-			<Button
-				disabled
-				variant="ghost"
-				size="icon">
+			<DisabledNavLink>
 				<Tally5 class="h-6 w-6" />
-			</Button>
+			</DisabledNavLink>
 		{:else}
-			<Button
-				onclick={() => selectPage('counter')}
-				class="hover:rounded-none hover:outline-none"
-				variant="ghost"
-				size="icon">
+			<NavLink href="/counter">
 				<Tally5 class="h-6 w-6" />
-			</Button>
+			</NavLink>
 		{/if}
 
 		<Separator />
 
 		<Separator class="mt-auto" />
 		{#if selectedPageTitle === 'settings'}
-			<Button
-				disabled
-				variant="ghost"
-				size="icon">
+			<DisabledNavLink>
 				<Settings class="h-6 w-6" />
-			</Button>
+			</DisabledNavLink>
 		{:else}
-			<Button
-				onclick={() => selectPage('settings')}
-				class="hover:rounded-none hover:outline-none"
-				variant="ghost"
-				size="icon">
+			<NavLink href="/settings">
 				<Settings class="h-6 w-6" />
-			</Button>
+			</NavLink>
 		{/if}
 	</nav>
 
