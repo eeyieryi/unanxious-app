@@ -5,7 +5,7 @@ Free your memory slots from events that are not to be done at the moment.
 Keep it away from now, and bring it closer when it's time to do so.
 
 > [!WARNING]
-> This app is under active development. New deployments may break data model compatibility with previous versions, meaning that previous saved data may be unusable with the new version without manual intervension.
+> This app is under active development. New deployments may break data model compatibility with previous versions, meaning that previous saved data may be unusable with the new version without manual intervention.
 
 ## Functionality
 
