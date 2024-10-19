@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { Archive, ArchiveRestore, ChevronLeft, Pause, Play, Trash2, X } from 'lucide-svelte';
+	import {
+		Archive,
+		ArchiveRestore,
+		ChevronLeft,
+		Pause,
+		Play,
+		TimerReset,
+		Trash2,
+		X
+	} from 'lucide-svelte';
 
 	import { cn } from '$lib/utils';
 	import { Input } from '$lib/components/ui/input';
@@ -155,6 +164,25 @@
 		{/if}
 
 		<div class="flex items-center space-x-2">
+			{#if !showArchived && focusService.state.selectedTimerLastInterval}
+				<Dialog.Root>
+					<Dialog.Trigger
+						class={cn('self-start', buttonVariants({ variant: 'outline', size: 'icon' }))}>
+						<TimerReset />
+					</Dialog.Trigger>
+					<Dialog.Content
+						class="flex max-w-[80%] flex-col items-center rounded-md sm:max-w-[400px]">
+						<Dialog.Title>Clear Interval</Dialog.Title>
+						<p class="font-light">Are you sure you want to delete the last/current interval?</p>
+						<Dialog.Close
+							onclick={() => focusService.clearIntervalSelectedTimer()}
+							class={cn('space-x-2', buttonVariants({ variant: 'destructive' }))}>
+							<TimerReset />
+							<span>Clear Interval</span>
+						</Dialog.Close>
+					</Dialog.Content>
+				</Dialog.Root>
+			{/if}
 			{#if showArchived}
 				<Button
 					class="space-x-2"

@@ -151,6 +151,19 @@ export class FocusService {
 		this.timerIntervalsMap.set(timerID, [timerInterval, ...this.state.selectedTimerIntervals]);
 	}
 
+	clearIntervalSelectedTimer(): void {
+		const timerID = this.state.selectedTimerID ? this.state.selectedTimerID : 'focus';
+		const lastTimerInterval = this.state.selectedTimerLastInterval;
+		if (!lastTimerInterval) return;
+
+		const timerIntervals = this.state.selectedTimerIntervals;
+
+		this.timerIntervalsMap.set(
+			timerID,
+			timerIntervals.filter((ti) => ti.id !== lastTimerInterval.id)
+		);
+	}
+
 	attachTaskToTimer(timer: Timer, task: Task): void {
 		this.timersMap.set(timer.id, { ...timer, task_id: task.id });
 	}
