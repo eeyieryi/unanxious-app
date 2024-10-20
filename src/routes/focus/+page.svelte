@@ -15,6 +15,7 @@
 	import { Label } from '$lib/components/ui/label';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Button, buttonVariants } from '$lib/components/ui/button';
+	import { CustomScrollArea } from '$lib/components/ui/custom-scroll-area';
 
 	import { dhms } from '$lib/datetime';
 	import { getAppDataService } from '$lib/app-state';
@@ -81,14 +82,11 @@
 						<span>Timer:&nbsp;{focusService.state.selectedTimer.name}</span>
 					{/if}
 				</Dialog.Trigger>
-				<Dialog.Content>
+				<Dialog.Content
+					class="flex max-h-[80%] max-w-[80%] flex-col items-center rounded-md sm:max-w-[400px]">
 					<Dialog.Title>
-						{#if selectedTimerTask}
-							<span class="capitalize">timer:</span>&nbsp;<span
-								>{focusService.state.selectedTimer.name}</span>
-						{:else}
-							<span class="capitalize">attach&nbsp;to&nbsp;task</span>
-						{/if}
+						<span class="capitalize">timer:</span>&nbsp;<span
+							>{focusService.state.selectedTimer.name}</span>
 					</Dialog.Title>
 
 					<div class="flex items-center space-x-2">
@@ -133,20 +131,26 @@
 					</div>
 
 					{#if !selectedTimerTask}
-						<div>
-							<ul>
-								{#each availableToAttachTasks as task (task.id)}
-									<li>
-										<Dialog.Close
-											onclick={() => {
-												if (!focusService.state.selectedTimer) return;
-												focusService.attachTaskToTimer(focusService.state.selectedTimer, task);
-											}}>{task.name}</Dialog.Close>
-									</li>
-								{/each}
-							</ul>
+						<span class="font-medium capitalize">attach&nbsp;to&nbsp;task</span>
+						<div class="flex grow overflow-hidden">
+							<CustomScrollArea>
+								<div>
+									<ul>
+										{#each availableToAttachTasks as task (task.id)}
+											<li>
+												<Dialog.Close
+													onclick={() => {
+														if (!focusService.state.selectedTimer) return;
+														focusService.attachTaskToTimer(focusService.state.selectedTimer, task);
+													}}>{task.name}</Dialog.Close>
+											</li>
+										{/each}
+									</ul>
+								</div>
+							</CustomScrollArea>
 						</div>
 					{/if}
+
 					<Dialog.Footer>
 						<Dialog.Close class={cn(buttonVariants({ variant: 'secondary' }))}>
 							<span class="capitalize">cancel</span>
