@@ -14,6 +14,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Dialog from '$lib/components/ui/dialog';
+	import { ConfirmDialog } from '$lib/components/ui/confirm-dialog';
 	import { Button, buttonVariants } from '$lib/components/ui/button';
 	import { CustomScrollArea } from '$lib/components/ui/custom-scroll-area';
 
@@ -103,31 +104,37 @@
 								<span class="capitalize">restore</span>
 							</Dialog.Close>
 						{:else}
-							<Dialog.Close
-								class={cn(buttonVariants({ variant: 'secondary' }), 'space-x-2')}
-								onclick={() => {
-									if (confirm('are you sure you want to archive this timer?')) {
-										if (!focusService.state.selectedTimer) return;
-										focusService.archiveTimer(focusService.state.selectedTimer);
-										focusService.state.selectedTimerID = null;
-									}
-								}}>
-								<Archive class="h-4 w-4" />
-								<span class="capitalize">archive</span>
-							</Dialog.Close>
+							<ConfirmDialog
+								onconfirm={() => {
+									if (!focusService.state.selectedTimer) return;
+									focusService.archiveTimer(focusService.state.selectedTimer);
+									focusService.state.selectedTimerID = null;
+								}}
+								title="Archive Timer"
+								message="Are you sure you want to archive this timer?">
+								{#snippet trigger()}
+									<Dialog.Close class={cn(buttonVariants({ variant: 'secondary' }), 'space-x-2')}>
+										<Archive class="h-4 w-4" />
+										<span class="capitalize">archive</span>
+									</Dialog.Close>
+								{/snippet}
+							</ConfirmDialog>
 						{/if}
 
-						<Dialog.Close
-							class={cn(buttonVariants({ variant: 'destructive' }), 'space-x-2')}
-							onclick={() => {
-								if (confirm('are you sure you want to delete this timer?')) {
-									if (!focusService.state.selectedTimer) return;
-									focusService.deleteTimer(focusService.state.selectedTimer);
-								}
-							}}>
-							<Trash2 class="h-4 w-4" />
-							<span class="capitalize">delete</span>
-						</Dialog.Close>
+						<ConfirmDialog
+							onconfirm={() => {
+								if (!focusService.state.selectedTimer) return;
+								focusService.deleteTimer(focusService.state.selectedTimer);
+							}}
+							title="Delete Timer"
+							message="Are you sure you want to delete this timer?">
+							{#snippet trigger()}
+								<Dialog.Close class={cn(buttonVariants({ variant: 'destructive' }), 'space-x-2')}>
+									<Trash2 class="h-4 w-4" />
+									<span class="capitalize">delete</span>
+								</Dialog.Close>
+							{/snippet}
+						</ConfirmDialog>
 					</div>
 
 					{#if !selectedTimerTask}

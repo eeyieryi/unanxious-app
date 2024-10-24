@@ -8,6 +8,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
+	import { ConfirmDialog } from '$lib/components/ui/confirm-dialog';
 	import { CustomScrollArea } from '$lib/components/ui/custom-scroll-area';
 
 	import { TaskCheckbox, TaskView, TaskUiPrefsDialog } from '.';
@@ -71,19 +72,23 @@
 			</span></h4>
 
 		{#if !['all', 'inbox', 'due', 'today'].includes(tasksService.state.selectedListID)}
-			<Button
-				class="h-8 w-8"
-				size="icon"
-				variant="destructive"
-				onclick={() => {
-					if (confirm('are you sure you want to delete this list and all its tasks?')) {
-						if (!tasksService.state.selectedList) return;
-						tasksService.deleteList({ listID: tasksService.state.selectedListID });
-						tasksService.state.selectedListID = 'inbox';
-					}
-				}}>
-				<Trash2 class="h-4 w-4" />
-			</Button>
+			<ConfirmDialog
+				onconfirm={() => {
+					if (!tasksService.state.selectedList) return;
+					tasksService.deleteList({ listID: tasksService.state.selectedListID });
+					tasksService.state.selectedListID = 'inbox';
+				}}
+				title="Delete List"
+				message="Are you sure you want to delete this list? It will also delete all tasks under the list.">
+				{#snippet trigger()}
+					<Button
+						class="h-8 w-8"
+						size="icon"
+						variant="destructive">
+						<Trash2 class="h-4 w-4" />
+					</Button>
+				{/snippet}
+			</ConfirmDialog>
 		{/if}
 	</header>
 

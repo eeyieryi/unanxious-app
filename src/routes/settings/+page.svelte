@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
+	import { ConfirmDialog } from '$lib/components/ui/confirm-dialog';
 
 	import { getAppDataService } from '$lib/app-state/data-service.svelte';
 
@@ -30,15 +31,19 @@
 
 	<Separator />
 
-	<Button
-		class="capitalize"
-		disabled={!actionsEnabled}
-		onclick={async () => {
-			if (confirm('Are you sure you want to export all data?')) {
-				dataService.backupService.export();
-			}
+	<ConfirmDialog
+		onconfirm={() => {
+			dataService.backupService.export();
 		}}
-		variant="secondary">export&nbsp;data</Button>
+		title="Backup Data"
+		message="Are you sure you want to backup all your data?">
+		{#snippet trigger()}
+			<Button
+				class="w-full capitalize"
+				disabled={!actionsEnabled}
+				variant="secondary">export&nbsp;data</Button>
+		{/snippet}
+	</ConfirmDialog>
 
 	<div class="flex flex-col space-y-2 rounded-md border p-4">
 		<input
@@ -53,36 +58,41 @@
 			disabled={!actionsEnabled}
 			onclick={() => importDataInputFile?.click()}>Select backup file to import</Button>
 
-		<Button
-			class="capitalize"
-			disabled={!actionsEnabled || !files || files.length !== 1}
-			onclick={async () => {
+		<ConfirmDialog
+			onconfirm={async () => {
 				if (!files) return;
 				const f = files.item(0);
 				if (!f) return;
-				if (
-					confirm(
-						'Are you sure you want to import backup data? This will override all current data'
-					)
-				) {
-					await dataService.backupService.import(f);
-					// show toast
-				}
+				await dataService.backupService.import(f);
+				// show toast
+				// navigate
 			}}
-			variant="destructive">import&nbsp;data</Button>
+			title="Restore Data"
+			message="Are you sure you want to restore your data? It deletes all current data.">
+			{#snippet trigger()}
+				<Button
+					class="w-full capitalize"
+					disabled={!actionsEnabled || !files || files.length !== 1}
+					variant="destructive">import&nbsp;data</Button>
+			{/snippet}
+		</ConfirmDialog>
 	</div>
 
 	<Separator />
 
-	<Button
-		class="capitalize"
-		disabled={!actionsEnabled}
-		onclick={() => {
-			if (confirm('Are you sure you want to delete all data?')) {
-				if (dataService.clearData) {
-					dataService.clearData();
-				}
+	<ConfirmDialog
+		onconfirm={() => {
+			if (dataService.clearData) {
+				dataService.clearData();
 			}
 		}}
-		variant="destructive">clear&nbsp;data</Button>
+		title="Erase Data"
+		message="Are you sure you want to erase all your data?">
+		{#snippet trigger()}
+			<Button
+				class="w-full capitalize"
+				disabled={!actionsEnabled}
+				variant="destructive">clear&nbsp;data</Button>
+		{/snippet}
+	</ConfirmDialog>
 </div>
