@@ -40,6 +40,7 @@
 		"@internationalized/date": "3.5.5",
 		"bits-ui": "^0.21.16",
 		"clsx": "^2.1.1",
+		"date-fns": "^4.1.0",
 		"file-saver": "^2.0.5",
 		"lucide-svelte": "^0.446.0",
 		"moment": "^2.30.1",

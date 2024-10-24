@@ -10,7 +10,7 @@
 
 	import { getAppDataService } from '$lib/app-state/data-service.svelte';
 
-	const { tasksService } = getAppDataService();
+	const { tasksService, uiPrefsService } = getAppDataService();
 
 	type ListItem = {
 		id: string;
@@ -25,8 +25,25 @@
 		{
 			id: 'inbox',
 			name: 'inbox'
+		},
+		{
+			id: 'due',
+			name: 'due'
+		},
+		{
+			id: 'today',
+			name: 'today'
 		}
 	];
+
+	let filteredLists = $derived<ListItem[]>(
+		fixedLists.filter((li) => {
+			if (li.id === 'all') {
+				return uiPrefsService.state.showListAll;
+			}
+			return true;
+		})
+	);
 
 	let createListForm = $state<HTMLFormElement>();
 	let createListFormInputName = $state('');
@@ -102,7 +119,7 @@
 
 			<CustomScrollArea>
 				<div class="flex flex-col space-y-2">
-					{#each fixedLists as fixedList (fixedList.id)}
+					{#each filteredLists as fixedList (fixedList.id)}
 						{@render item(fixedList)}
 					{/each}
 

@@ -2,6 +2,7 @@ import { onMount } from 'svelte';
 
 interface UIPreferences {
 	showCompletedTasks: boolean;
+	showListAll: boolean;
 }
 
 function isValidUIPreferences(data: unknown): data is UIPreferences {
@@ -10,6 +11,7 @@ function isValidUIPreferences(data: unknown): data is UIPreferences {
 
 class UIState {
 	public showCompletedTasks = $state(false);
+	public showListAll = $state(false);
 
 	constructor() {}
 
@@ -19,7 +21,8 @@ class UIState {
 
 	public fromJSON(): string {
 		return JSON.stringify({
-			showCompletedTasks: this.showCompletedTasks
+			showCompletedTasks: this.showCompletedTasks,
+			showListAll: this.showListAll
 		} satisfies UIPreferences);
 	}
 
@@ -50,6 +53,11 @@ export class UIPreferencesService {
 
 	public toggleShowCompleted(): void {
 		this.state.showCompletedTasks = !this.state.showCompletedTasks;
+		this.saveToLocalStorage();
+	}
+
+	public toggleShowListAll(): void {
+		this.state.showListAll = !this.state.showListAll;
 		this.saveToLocalStorage();
 	}
 

@@ -22,8 +22,9 @@
 
 	function handleSubmitCreateTask(e: SubmitEvent) {
 		e.preventDefault();
-		const listID =
-			tasksService.state.selectedListID === 'all' ? 'inbox' : tasksService.state.selectedListID;
+		const listID = ['all', 'due', 'today'].includes(tasksService.state.selectedListID)
+			? 'inbox'
+			: tasksService.state.selectedListID;
 		const tu = tasksService.createTask({ name: createTaskFormInputName, listID: listID });
 		if (tu) {
 			if (tasksService.state.selectedListID !== tu.list_id) {
@@ -69,7 +70,7 @@
 				{/if}
 			</span></h4>
 
-		{#if !['all', 'inbox'].includes(tasksService.state.selectedListID)}
+		{#if !['all', 'inbox', 'due', 'today'].includes(tasksService.state.selectedListID)}
 			<Button
 				class="h-8 w-8"
 				size="icon"
@@ -86,29 +87,31 @@
 		{/if}
 	</header>
 
-	<form
-		bind:this={createTaskForm}
-		class="flex flex-col px-4"
-		onsubmit={handleSubmitCreateTask}>
-		<div class="flex flex-row items-center space-x-2">
-			<Label for="create-task-title-input">
-				<span class="uppercase">task</span>
-			</Label>
-			<Input
-				bind:ref={createTaskFormNameInput}
-				id="create-task-title-input"
-				type="text"
-				name="title"
-				bind:value={createTaskFormInputName}
-				placeholder="organize room" />
-			<Button
-				variant="outline"
-				size="icon"
-				type="submit">
-				<Plus />
-			</Button>
-		</div>
-	</form>
+	{#if !['due', 'today'].includes(tasksService.state.selectedListID)}
+		<form
+			bind:this={createTaskForm}
+			class="flex flex-col px-4"
+			onsubmit={handleSubmitCreateTask}>
+			<div class="flex flex-row items-center space-x-2">
+				<Label for="create-task-title-input">
+					<span class="uppercase">task</span>
+				</Label>
+				<Input
+					bind:ref={createTaskFormNameInput}
+					id="create-task-title-input"
+					type="text"
+					name="title"
+					bind:value={createTaskFormInputName}
+					placeholder="organize room" />
+				<Button
+					variant="outline"
+					size="icon"
+					type="submit">
+					<Plus />
+				</Button>
+			</div>
+		</form>
+	{/if}
 
 	{#if tasksToShow.length > 0}
 		<CustomScrollArea showArrows={tasksService.state.selectedTask === null}>

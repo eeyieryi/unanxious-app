@@ -1,6 +1,7 @@
 import { SvelteMap } from 'svelte/reactivity';
 
 import { Map as YMap } from 'yjs';
+import { fromUnixTime, isBefore, isToday, startOfToday } from 'date-fns';
 
 import { getUnixEpochFromNow } from '$lib/datetime';
 
@@ -10,7 +11,7 @@ class TasksState {
 	tasks = $state(new SvelteMap<string, Task>());
 	lists = $state(new SvelteMap<string, List>());
 
-	selectedListID = $state<string>('inbox');
+	selectedListID = $state<string>('today');
 	selectedTaskID = $state<string | null>(null);
 
 	constructor() {}
@@ -27,10 +28,26 @@ class TasksState {
 	readonly selectedListTasks = $derived.by(() => {
 		const listID = this.selectedListID;
 		const tasks = Array.from(this.tasks.values());
-		if (listID === 'all') {
-			return tasks;
+		switch (listID) {
+			case 'all':
+				return tasks;
+			case 'due':
+				return tasks.filter((task) => {
+					if (task.due_at) {
+						return isBefore(fromUnixTime(task.due_at), startOfToday());
+					}
+					return false;
+				});
+			case 'today':
+				return tasks.filter((task) => {
+					if (task.due_at) {
+						return isToday(fromUnixTime(task.due_at));
+					}
+					return false;
+				});
+			default:
+				return tasks.filter((task) => task.list_id === listID);
 		}
-		return tasks.filter((task) => task.list_id === listID);
 	});
 
 	readonly selectedTask = $derived.by(() => {
