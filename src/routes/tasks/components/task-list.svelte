@@ -13,6 +13,7 @@
 
 	import { TaskCheckbox, TaskView, TaskUiPrefsDialog } from '.';
 
+	import type { Task } from '$lib/app-state';
 	import { getAppDataService } from '$lib/app-state/data-service.svelte';
 
 	const { tasksService, uiPrefsService } = getAppDataService();
@@ -41,14 +42,25 @@
 	}
 	let { toggleListShowBtn }: Props = $props();
 
-	let tasksToShow = $derived(
-		tasksService.state.selectedListTasks.filter((task) => {
-			if (uiPrefsService.state.showCompletedTasks) {
-				return true;
-			}
-			return !task.completed;
-		})
-	);
+	let sections = $derived.by(() => {
+		const notCompleted = tasksService.state.selectedListTasks.filter((task) => !task.completed);
+		const sections: { id: string; title: string | null; tasks: Task[] }[] = [];
+		if (notCompleted.length > 0) {
+			sections.push({
+				id: 'unsectioned',
+				title: null,
+				tasks: notCompleted
+			});
+		}
+		if (uiPrefsService.state.showCompletedTasks) {
+			sections.push({
+				id: 'completed',
+				title: 'completed tasks',
+				tasks: tasksService.state.selectedListTasks.filter((task) => task.completed)
+			});
+		}
+		return sections;
+	});
 </script>
 
 <div class="flex h-full w-full max-w-full flex-col space-y-4 bg-background">
@@ -118,31 +130,51 @@
 		</form>
 	{/if}
 
-	{#if tasksToShow.length > 0}
-		<CustomScrollArea showArrows={tasksService.state.selectedTask === null}>
-			<ul class="flex flex-col items-center justify-center space-y-2">
-				{#each tasksToShow as task (task.id)}
-					<li class="flex w-full items-center space-x-2">
-						<TaskCheckbox task={task} />
-						<Button
-							class={clsx('w-full text-wrap', {
-								'text-gray-500 line-through': task.completed
-							})}
-							variant="outline"
-							onclick={() => {
-								tasksService.state.selectedTaskID = task.id;
-							}}>
-							<span>{task.name.length > 0 ? task.name : 'No title'}</span>
-						</Button>
-					</li>
+	<CustomScrollArea showArrows={tasksService.state.selectedTask === null}>
+		{#if sections.length > 0}
+			<div>
+				{#each sections as section (section.id)}
+					{#if section.tasks.length > 0}
+						<div class="mb-4 space-y-2 rounded-md bg-muted p-2">
+							{#if section.title !== null}
+								<div>
+									<span class="ml-2 text-sm font-medium uppercase text-foreground"
+										>{section.title}</span>
+								</div>
+							{/if}
+							<ul
+								class={clsx('flex flex-col items-center justify-center space-y-3', {
+									'opacity-50': section.id === 'completed'
+								})}>
+								{#each section.tasks as task (task.id)}
+									{#key task.id}
+										<li class="flex w-full items-center space-x-2">
+											<TaskCheckbox
+												class="ml-1"
+												task={task} />
+											<button
+												class={clsx('grow text-wrap text-start', {
+													'text-gray-500 line-through': task.completed
+												})}
+												onclick={() => {
+													tasksService.state.selectedTaskID = task.id;
+												}}>
+												<span>{task.name.length > 0 ? task.name : 'No title'}</span>
+											</button>
+										</li>
+									{/key}
+								{/each}
+							</ul>
+						</div>
+					{/if}
 				{/each}
-			</ul>
-		</CustomScrollArea>
-	{:else}
-		<div class="flex items-center justify-center">
-			<span class="font-bold uppercase">EMPTY LIST</span>
-		</div>
-	{/if}
+			</div>
+		{:else}
+			<div class="flex items-center justify-center">
+				<span class="font-bold uppercase">empty&nbsp;list</span>
+			</div>
+		{/if}
+	</CustomScrollArea>
 </div>
 
 {#if tasksService.state.selectedTask}
