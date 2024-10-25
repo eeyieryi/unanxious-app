@@ -5,7 +5,7 @@
 
 	import { toggleMode } from 'mode-watcher';
 
-	import { CheckCheck, Timer, Sun, Moon, Settings, Tally5 } from 'lucide-svelte';
+	import { CheckCheck, Info, Timer, Sun, Moon, Settings, Tally5 } from 'lucide-svelte';
 
 	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
@@ -26,7 +26,7 @@
 	});
 
 	onNavigate((navigation) => {
-		if (navigation.to && navigation.to.url.pathname !== '/') {
+		if (navigation.to) {
 			localStorage.setItem(initialPage, navigation.to.url.pathname);
 		}
 	});
@@ -69,6 +69,14 @@
 	<Separator />
 
 	<Separator class="mt-auto" />
+
+	<NavItem
+		href="/"
+		disabled={currentPage === '/'}>
+		<Info class="h-6 w-6" />
+	</NavItem>
+
+	<Separator />
 
 	<NavItem
 		href="/settings"
