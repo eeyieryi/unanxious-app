@@ -3,16 +3,14 @@
 	import { page } from '$app/stores';
 	import { goto, onNavigate } from '$app/navigation';
 
+	import { toggleMode } from 'mode-watcher';
+
 	import { CheckCheck, Timer, Sun, Moon, Settings, Tally5 } from 'lucide-svelte';
 
 	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
 
-	import { ThemeToggler } from '$lib/toggle-theme';
-
 	import NavItem from './nav-item.svelte';
-
-	const themeToggler = new ThemeToggler();
 
 	let currentPage = $derived($page.url.pathname);
 
@@ -36,7 +34,7 @@
 
 <nav class="flex w-full min-w-[40px] max-w-[40px] flex-col items-center border-r">
 	<Button
-		onclick={() => themeToggler.toggleTheme()}
+		onclick={() => toggleMode()}
 		class="hover:rounded-none hover:outline-none"
 		variant="ghost"
 		size="icon">

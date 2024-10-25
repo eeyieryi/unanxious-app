@@ -43,6 +43,7 @@
 		"date-fns": "^4.1.0",
 		"file-saver": "^2.0.5",
 		"lucide-svelte": "^0.446.0",
+		"mode-watcher": "^0.4.1",
 		"moment": "^2.30.1",
 		"tailwind-merge": "^2.5.4",
 		"tailwind-variants": "^0.2.1",

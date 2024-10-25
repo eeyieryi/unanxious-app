@@ -1,6 +1,8 @@
 <script lang="ts">
 	import '../app.css';
 
+	import { ModeWatcher } from 'mode-watcher';
+
 	import { Footer, NavBar } from './components';
 
 	import { setAppDataService } from '$lib/app-state';
@@ -13,6 +15,8 @@
 <svelte:head>
 	<title>Unanxious</title>
 </svelte:head>
+
+<ModeWatcher disableTransitions={true} />
 
 <div class="flex h-screen w-screen max-w-[500px] flex-row border">
 	<NavBar />
