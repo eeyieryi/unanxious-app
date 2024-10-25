@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Plus, Minus } from 'lucide-svelte';
+	import { Minus, Plus } from 'lucide-svelte';
 
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
@@ -8,6 +8,8 @@
 	import { formatDueAt } from '$lib/datetime';
 	import type { Counter } from '$lib/app-state';
 	import { getAppDataService } from '$lib/app-state/data-service.svelte';
+
+	import CounterOptionsDialog from './counter-options-dialog.svelte';
 
 	const { counterService } = getAppDataService();
 
@@ -25,7 +27,10 @@
 </script>
 
 <li class="relative flex w-full flex-col items-center justify-start rounded-md border">
-	<span class="mb-4 mt-4 text-sm font-medium">{counter.name}</span>
+	<header class="relative w-full py-2 text-center">
+		<span class="mb-4 mt-4 text-sm font-medium">{counter.name}</span>
+		<CounterOptionsDialog counter={counter} />
+	</header>
 	<div class="mb-2 flex items-center">
 		<Button
 			onclick={() => counterService.decreaseCounter(counter, stepBy)}
