@@ -1,7 +1,17 @@
 import { SvelteMap } from 'svelte/reactivity';
 
 import { Map as YMap } from 'yjs';
-import { fromUnixTime, isBefore, isToday, startOfToday } from 'date-fns';
+import {
+	addWeeks,
+	fromUnixTime,
+	isBefore,
+	isPast,
+	isSameMonth,
+	isToday,
+	isTomorrow,
+	startOfToday,
+	startOfTomorrow
+} from 'date-fns';
 
 import { getUnixEpochFromNow } from '$lib/datetime';
 
@@ -42,6 +52,31 @@ class TasksState {
 				return tasks.filter((task) => {
 					if (task.due_at) {
 						return isToday(fromUnixTime(task.due_at));
+					}
+					return false;
+				});
+			case 'tomorrow':
+				return tasks.filter((task) => {
+					if (task.due_at) {
+						return isTomorrow(fromUnixTime(task.due_at));
+					}
+					return false;
+				});
+			case 'next-seven-days':
+				return tasks.filter((task) => {
+					if (task.due_at) {
+						const dueAt = fromUnixTime(task.due_at);
+						return (
+							!isPast(dueAt) && !isToday(dueAt) && isBefore(dueAt, addWeeks(startOfTomorrow(), 1))
+						);
+					}
+					return false;
+				});
+			case 'this-month':
+				return tasks.filter((task) => {
+					if (task.due_at) {
+						const dueAt = fromUnixTime(task.due_at);
+						return isSameMonth(startOfToday(), dueAt);
 					}
 					return false;
 				});

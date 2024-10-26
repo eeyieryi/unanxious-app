@@ -24,9 +24,7 @@
 
 	function handleSubmitCreateTask(e: SubmitEvent) {
 		e.preventDefault();
-		const listID = ['all', 'due', 'today'].includes(tasksService.state.selectedListID)
-			? 'inbox'
-			: tasksService.state.selectedListID;
+		const listID = tasksService.state.selectedListID;
 		const tu = tasksService.createTask({ name: createTaskFormInputName, listID: listID });
 		if (tu) {
 			if (tasksService.state.selectedListID !== tu.list_id) {
@@ -83,7 +81,7 @@
 				{/if}
 			</span></h4>
 
-		{#if !['all', 'inbox', 'due', 'today'].includes(tasksService.state.selectedListID)}
+		{#if !['all', 'inbox', 'due', 'today', 'tomorrow', 'next-seven-days', 'this-month'].includes(tasksService.state.selectedListID)}
 			<ConfirmDialog
 				onconfirm={() => {
 					if (!tasksService.state.selectedList) return;
@@ -104,7 +102,7 @@
 		{/if}
 	</header>
 
-	{#if !['due', 'today'].includes(tasksService.state.selectedListID)}
+	{#if !['all', 'due', 'today', 'tomorrow', 'next-seven-days', 'this-month'].includes(tasksService.state.selectedListID)}
 		<form
 			bind:this={createTaskForm}
 			class="flex flex-col px-4"

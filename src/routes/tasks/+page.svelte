@@ -33,6 +33,18 @@
 		{
 			id: 'today',
 			name: 'today'
+		},
+		{
+			id: 'tomorrow',
+			name: 'tomorrow'
+		},
+		{
+			id: 'next-seven-days',
+			name: 'Next 7 Days'
+		},
+		{
+			id: 'this-month',
+			name: 'This Month'
 		}
 	];
 
@@ -94,12 +106,12 @@
 
 			<Separator />
 
-			{#snippet item({ id, name: title }: ListItem)}
+			{#snippet item({ id, name }: ListItem)}
 				<Button
 					variant="outline"
 					onclick={() => selectList(id)}
 					class="capitalize">
-					<span>{title}</span>
+					<span>{name}</span>
 				</Button>
 			{/snippet}
 
@@ -123,8 +135,8 @@
 						{@render item(fixedList)}
 					{/each}
 
-					{#each Array.from(tasksService.state.lists.values()) as { name, id } (id)}
-						{@render item({ name, id })}
+					{#each Array.from(tasksService.state.lists.values()) as list (list.id)}
+						{@render item({ id: list.id, name: list.name })}
 					{/each}
 				</div>
 			</CustomScrollArea>
