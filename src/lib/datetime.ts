@@ -1,7 +1,9 @@
-import moment from 'moment';
+import { formatDistanceToNow } from 'date-fns';
 
 export function formatDueAt(seconds: number): string {
-	return moment().to(getDateTimeFromUnixEpoch(seconds));
+	return formatDistanceToNow(getDateTimeFromUnixEpoch(seconds), {
+		addSuffix: true
+	});
 }
 
 export function millisecondsToSeconds(ms: number) {
