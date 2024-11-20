@@ -4,7 +4,7 @@
 
 	import { Button, buttonVariants } from '$lib/components/ui/button';
 
-	import { cn } from '$lib/utils';
+	import { cn } from '$lib/components/utils';
 
 	interface Props extends HTMLAnchorAttributes {
 		disabled: boolean;

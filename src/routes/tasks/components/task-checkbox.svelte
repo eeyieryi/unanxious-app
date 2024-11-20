@@ -8,7 +8,7 @@
 
 	const { tasksService } = getAppDataService();
 
-	interface Props extends ComponentProps<Checkbox> {
+	interface Props extends ComponentProps<typeof Checkbox> {
 		task: Task;
 	}
 	let { task, ...rest }: Props = $props();

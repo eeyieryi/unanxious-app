@@ -5,7 +5,7 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 
 	import { getAppDataService } from '$lib/app-state';
-	import { cn } from '$lib/utils';
+	import { cn } from '$lib/components/utils';
 
 	const { uiPrefsService } = getAppDataService();
 </script>

@@ -10,7 +10,7 @@
 		X
 	} from 'lucide-svelte';
 
-	import { cn } from '$lib/utils';
+	import { cn } from '$lib/components/utils';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Dialog from '$lib/components/ui/dialog';

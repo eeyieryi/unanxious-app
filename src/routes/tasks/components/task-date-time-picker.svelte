@@ -8,7 +8,7 @@
 		getLocalTimeZone
 	} from '@internationalized/date';
 
-	import { cn } from '$lib/utils';
+	import { cn } from '$lib/components/utils';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Calendar } from '$lib/components/ui/calendar';
 	import { buttonVariants } from '$lib/components/ui/button';
@@ -57,6 +57,7 @@
 	<Dialog.Content class="w-full max-w-sm justify-center">
 		<Dialog.Title>Set due date</Dialog.Title>
 		<Calendar
+			type="single"
 			initialFocus
 			bind:value={dateValue} />
 		<Dialog.Footer class="flex flex-col space-x-2">

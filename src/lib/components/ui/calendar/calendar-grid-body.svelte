@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { Calendar as CalendarPrimitive } from 'bits-ui';
-	import { cn } from '$lib/utils';
+	import { cn } from '$lib/components/utils.js';
 
-	type $$Props = CalendarPrimitive.GridBodyProps;
-
-	let className: $$Props['class'] = undefined;
-	export { className as class };
+	let {
+		ref = $bindable(null),
+		class: className,
+		...restProps
+	}: CalendarPrimitive.GridBodyProps = $props();
 </script>
 
 <CalendarPrimitive.GridBody
+	bind:ref={ref}
 	class={cn(className)}
-	{...$$restProps}>
-	<slot />
-</CalendarPrimitive.GridBody>
+	{...restProps} />

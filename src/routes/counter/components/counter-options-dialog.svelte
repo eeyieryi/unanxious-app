@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { MoreVertical } from 'lucide-svelte';
 
-	import { cn } from '$lib/utils';
+	import { cn } from '$lib/components/utils';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { ConfirmDialog } from '$lib/components/ui/confirm-dialog';
 	import { Button, buttonVariants } from '$lib/components/ui/button';

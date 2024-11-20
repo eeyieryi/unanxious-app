@@ -19,7 +19,7 @@
 	const { tasksService, uiPrefsService } = getAppDataService();
 
 	let createTaskForm = $state<HTMLFormElement>();
-	let createTaskFormNameInput = $state<HTMLInputElement>();
+	let createTaskFormNameInput = $state<HTMLInputElement | null>(null);
 	let createTaskFormInputName = $state('');
 
 	function handleSubmitCreateTask(e: SubmitEvent) {
